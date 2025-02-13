@@ -1,7 +1,7 @@
 #Primeiro acesso ao git? configura globalmente
 #Abra o terminal na pasta do projeto e digite os códigos a seguir
 #git config --global user.name 'Otto Tavares'
-#git config --global user.email 'otto.nascimento@prof.infnet.edu.br'
+#git config --global user.email 'otavares93@gmail.com'
 
 library(usethis)
 usethis::use_git_config(user.name = "Otto Tavares", user.email = "otavares93@gmail.com")

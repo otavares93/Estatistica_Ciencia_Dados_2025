@@ -8,6 +8,13 @@ date: "2025-02-11"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+Importei os dados de populacao diretamente da wikipedia. Fiz essa análise apenas para o Top2
+
+```{r importand os dados, include=FALSE}
+
+```
+
 ## R Markdown
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
