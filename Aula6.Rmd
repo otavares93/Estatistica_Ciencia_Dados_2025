@@ -1,0 +1,109 @@
+---
+title: "Aula6 - Visualização de dados"
+output: github_document
+date: "2025-02-13"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Importando bibliotecas para análise
+
+```{r importando bibliotecas, echo = TRUE}
+library(tidyverse)
+library(readxl)
+library(knitr)
+library(data.table)
+```
+
+## Importando os dados
+
+Vamos importar os dados de crimes ocorridos e registrados pelos batalhões do estado do Rio de Janeiro.
+
+```{r importando os dados, echo = TRUE, warning = TRUE}
+crimes <- readr::read_csv2("/Users/ottotavares/Library/Mobile Documents/com~apple~CloudDocs/Documents/infnet/Estatistica_Ciencia_Dados_2024/dados_auxiliares/BaseDPEvolucaoMensalCisp.csv", locale = readr::locale(encoding = "latin1"))
+```
+
+## Limpando as datas e selecionando as variáveis de interesse
+
+```{r limpando os dados 1 e selecionando as vars de interesse, echo = TRUE, warning = FALSE}
+
+#Ajustando as datas, selecionando variáveis de interesse
+#crimes$mes.ano <- as.IDate(paste("01", unlist(lapply(strsplit(crimes$mes_ano, split = "m"), function(x) x[2])), unlist(lapply(strsplit(crimes$mes_ano, split = "m"), function(x) x[1])), sep = "-"), format = "%d-%m-%Y")
+
+crimes <- crimes %>% dplyr::mutate(mes.ano = as.IDate(paste("01", mes, ano, sep = "-"), format = "%d-%m-%Y")) %>% dplyr::select(CISP, mes.ano, AISP, roubo_cx_eletronico:apreensao_drogas_sem_autor)
+
+
+
+#Filtrando apenas para as regi˜
+```
+
+#Agregando variáveis por batalhão para facilitar a visualização e selecionando apenas três batalhões de interesse
+
+```{r limpando os dados 2 e selecionando as regioes de interesse, echo = TRUE, warning = FALSE}
+
+crimes.regioes <- crimes %>% dplyr::group_by(AISP, mes.ano) %>% dplyr::summarise_at(vars(furto_veiculos:total_furtos), sum)
+
+#Dando nome aos bairros atendidos pelos batalhões em questão e em seguida os selecionando como batalhões de interesse
+
+crimes.regioes$aisp.nm <- ifelse(crimes.regioes$AISP == 2, "Botafogo", ifelse(crimes.regioes$AISP == 26, "Teresópolis",  ifelse(crimes.regioes$AISP == 20, "Nova Iguaçu", NA)))
+crimes.regioes <- crimes.regioes %>% dplyr::filter(AISP %in% c(2, 20, 26))
+```
+
+
+## Evolução de furtos por região 
+
+Podemos criar esse plot em sua versão básica de duas maneiras.
+
+1. Parametrizar (mapear os dados para elementos geométricos) o ggplot com a estética e adicionar o elemento geométrico em seguida sem precisar realizar sua parametrização.
+
+```{r evolucao furtos base 1, echo=TRUE}
+ggplot(data = crimes.regioes, aes(x = mes.ano, y = total_furtos, group = AISP)) + geom_line()
+```
+
+2. Apenas fornecer a base para o ggplot e deixar toda a parametrização para o elemento geométrico
+
+```{r evolucao furtos base 2, echo=TRUE}
+ggplot(data = crimes.regioes) + geom_line(aes(x = mes.ano, y = total_furtos, group = AISP))
+```
+## Adicionando cores ao gráfico
+
+```{r evolucao furtos base 1 com cores, echo=TRUE}
+ggplot(data = crimes.regioes, aes(x = mes.ano, y = total_furtos, group = AISP, color = aisp.nm)) + 
+  geom_line()
+```
+
+## Alterando o tema gráfico
+
+```{r evolucao furtos base 1 com cores e com tema, echo=TRUE}
+ggplot(data = crimes.regioes, aes(x = mês.ano, y = total_furtos, group = AISP, color = aisp.nm)) + 
+  geom_line() +
+  theme_bw()
+```
+
+## Ajustando os eixos e títulos do gráfico
+
+```{r evolucao furtos base 1 com cores, com tema e titulos ajustados, echo=TRUE}
+ggplot(data = crimes.regioes, aes(x = mes.ano, y = total_furtos, group = AISP, color = aisp.nm)) + 
+  geom_line() +
+  xlab("Período de Análise") +
+  ylab("Ocorrências de roubo registradas") +
+  labs(title = "Séries temporais de furto por região", subtitle = "Regiões selecionadas no Estado do Rio de Janeiro", caption = "Fonte: Instituto de Segurança Pública - RJ") +
+  theme_bw() +
+  guides(colour = guide_legend(title = "Regiões de Segurança Pública"))
+```
+
+
+
+## Dever de casa
+
+```{r evolucao furtos base 1 com cores, com tema e titulos ajustados e variavels adicional, echo=TRUE}
+ggplot(data = crimes.regioes, aes(x = mes.ano, y = total_furtos, group = AISP, color = furto_transeunte, shape = aisp.nm)) + geom_line() +
+xlab("Período de Análise") +
+ylab("Ocorrências de roubo registradas") +
+labs(title = "Séries temporais de furto por região", subtitle = "Regiões selecionadas no Estado do Rio de Janeiro", caption = "Fonte: Instituto de Segurança Pública - RJ") +
+theme_bw() +
+scale_colour_gradient(low = "yellow", high = "red", na.value = NA) +
+guides(colour = guide_colourbar(title = "Furto à traseunte"), shape = guide_legend(title = "Regiões de Segurança Pública"))
+```
