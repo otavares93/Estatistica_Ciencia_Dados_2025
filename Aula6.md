@@ -144,7 +144,9 @@ ggplot(data = crimes.regioes, aes(x = mes.ano, y = total_furtos, group = AISP, c
 ## Dever de casa
 
 ``` r
-ggplot(data = crimes.regioes, aes(x = mes.ano, y = total_furtos, group = AISP, color = furto_transeunte, shape = aisp.nm)) + geom_line() +
+ggplot(data = crimes.regioes, aes(x = mes.ano, y = total_furtos, group = AISP, color = furto_transeunte, shape = aisp.nm)) + 
+geom_line() + 
+geom_point() +
 xlab("Período de Análise") +
 ylab("Ocorrências de roubo registradas") +
 labs(title = "Séries temporais de furto por região", subtitle = "Regiões selecionadas no Estado do Rio de Janeiro", caption = "Fonte: Instituto de Segurança Pública - RJ") +

@@ -1,0 +1,164 @@
+---
+title: "Análise descritiva de uma base de dados"
+author: "Otto Tavares"
+date: "2023-02-13"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Introdução
+
+Na Aula 7, temos o objetivo de abrir uma base de dados e dar os primeiros passos em análise estatística dessa base.
+
+Como sempre, o primeiro passo é importar as bibliotecas que serão utilizadas para análise, como tydiverse, summarytools e dlookr.
+
+```{r importando bibliotecas, echo = TRUE}
+library(tidyverse)
+library(dlookr)
+library(summarytools)
+library(readxl)
+library(knitr)
+
+#crimes.furtos %>% dplyr::filter(mes_ano == "2022m12") %>% diagnose()
+
+#crimes.furtos %>% dplyr::filter(mes_ano == "2022m12") %>% dfSummary() %>% view()
+```
+
+A base trabalhada nesta aula, será a base de dados hipotética disponbilizada no livro texto dos autores Bussab e Moretim. Vamos importá-la e imprimir as primeiras observações para conhecimento das variáveis.
+
+```{r importando dados, echo = TRUE}
+salarios <- readxl::read_excel("dados_auxiliares/dados_bussab_m.xlsx")
+```
+
+```{r imprimindo as variaveis, echo = TRUE}
+kable(head(salarios))
+```
+
+### Identificando os tipos de cada variável na base
+
+Para identificar os tipos de cada variável na base, vamos utilizar a função diagnose do pacote dlookr e reportar o tipo de cada um para melhor trabalharmos os dados.
+
+```{r identificando os tipos de variáveis, echo = TRUE}
+salarios %>% dlookr::diagnose() %>% kable()
+```
+
+É fácil ver que na base há três variáveis qualitativas, sendo as variáveis Estado Civil e região nominais, enquanto a variável Grau de Instrução é ordinal.
+
+Sobre as variáveis quantitativas, temos número de filhos e idade com variáveis discretas, equanto a variável salário é contínua.
+
+##Análise de frequências de variáveis qualitativas
+
+A variável região é uma das variáveis qualitativas nominais da base, sendo uma variável interessante para extraírmos as frequências. Para esse caso, vamos utilizar a função freq() do pacote summarytools
+
+```{r frequencias de uma variavel, echo = TRUE}
+salarios %>% dplyr::select(regiao) %>% summarytools::freq(., style = 'rmarkdown') %>% kable()
+```
+
+Nas colunas Freq, temos a frequência absoluta, mostrando um grau de bastante homogeneidade entre as classes. Padrão esse, que é confirmado com a coluna Valid, que apresenta as frequências relativas de cada opção de região. 
+
+Podemos fazer a mesma análise para os dados de estado civil, os quais podemos estar interessados em buscar evidência se há mais funcionários casados ou solteiros na empresa. A seguir, temos a tabela destas proporções, onde é perceptível que há maior proporção de funcionários casados.
+
+
+```{r frequencias da variavel ecivil, echo = TRUE}
+salarios %>% dplyr::select(estado_civil) %>% summarytools::freq(., style = 'rmarkdown') %>% kable()
+```
+
+É importante destacar, que lemos a coluna Valid sem nos preocupar nestes casos, pois não há dados faltantes para nenhumas das duas variáveis.
+
+
+Por fim, podemos criar tabelas de frequências para uma variável quantitativa discreta, como é o caso do número de filhos dos funcionários da empresa. 
+
+```{r frequencias da variavel nfilhos, echo = TRUE}
+salarios %>% dplyr::select(n_filhos) %>% summarytools::freq(., style = 'rmarkdown') %>% kable()
+```
+
+Como há dados faltantes para essa variável, é importante o analista determinar qual o espaço amostral está interessado em focar sua análise. 
+
+A fim de ser comparável às análises pregressas, é importante que as frequências absoluta e relativa do total de dados seja considerada, isto é, leitura da coluna Total, a fim de manter o mesmo espaço amostral.
+
+Caso, ele esteja interessado em analisar apenas os dados válidos, ele pode redefinir o espaço amostral, ler apenas a coluna Valid, porém recalculando as tabelas anteriores, considerando os indivíduos apenas com dados preenchidos para a variável filhos.
+
+##Análise descritiva e de histogramas de uma variável contínua\
+
+Já para a variável salários, podemos analisar a centralidade dos dados, dipersão, assimetria, bem como suas estatísticas de ordem, a fim de checar se há presença de outliers.
+
+Para realizar essa análise, podemos utilizar a função descr do pacote summarytools, e posteriormente realizar a leitura desses dados.
+
+```{r desc variavel salario , echo = TRUE}
+salarios %>% dplyr::select(salario) %>% summarytools::descr(., style = 'rmarkdown') %>% kable()
+```
+
+```{r desc variaveis do banco com visu, echo = TRUE}
+salarios %>% summarytools::dfSummary()
+```
+##Análise visual da distribuição dos indivíduos por idade
+
+### Com o boxplot
+```{r analisando salarios por grau instrucao com box , echo = TRUE}
+salarios %>% dplyr::select(Grau_de_instrucao, salario) %>% ggplot(aes(x=Grau_de_instrucao, y = salario)) + geom_boxplot() + xlab('Grau de instrução') + ylab('Salários') + theme_classic()
+```
+
+### Com o violino
+
+```{r analisando salarios por grau instrucao com violin , echo = TRUE}
+salarios %>% dplyr::select(Grau_de_instrucao, salario) %>% ggplot(aes(x=Grau_de_instrucao, y = salario)) + geom_violin() + xlab('Grau de instrução') + ylab('Salários') + theme_classic()
+```
+
+### Com o dotplot
+
+```{r analisando salarios por grau instrucao com dot , echo = TRUE}
+salarios %>% dplyr::select(Grau_de_instrucao, salario) %>% ggplot(aes(x=Grau_de_instrucao, y = salario)) + geom_dotplot(binaxis = "y", stackdir = "center") + xlab('Grau de instrução') + ylab('Salários') + theme_classic()
+```
+
+### Unindo o dotplot com o box ou violin para melhor ilustrar a análise
+
+```{r analisando salarios por grau instrucao com dot e violin , echo = TRUE}
+salarios %>% dplyr::select(Grau_de_instrucao, salario) %>% ggplot(aes(x=Grau_de_instrucao, y = salario)) + geom_violin() + geom_dotplot(binaxis = "y", stackdir = "center") + xlab('Grau de instrução') + ylab('Salários') + theme_classic()
+```
+
+
+##Análise visual da variável salário
+
+### Utilizando o número de bins indicado pelos autores do livro, bins igual a 5.
+
+```{r analisando salario visualmente , echo = TRUE}
+salarios %>% dplyr::select(salario) %>% ggplot(aes(x=salario))+geom_histogram(aes(y = after_stat(density)) ,bins = 5, fill = 'lightblue') + xlab('Salário') + ylab('Densidade de Frequência') + geom_vline(xintercept=c(median(salarios$salario), mean(salarios$salario))) + annotate("text", x=median(salarios$salario) + 0.3, y=0.05, label="Mediana", angle=90) + annotate("text", x=mean(salarios$salario) + 0.3, y=0.05, label="Média", angle=90) + theme_classic()
+```
+### Adicionando a densidade estimada via kernel à visualização
+
+```{r analisando salario visualmente com kernel , echo = TRUE}
+salarios %>% dplyr::select(salario) %>% ggplot(aes(x=salario))+geom_histogram(aes(y = after_stat(density)) ,bins = 5, fill = 'lightblue') + xlab('Salário') + ylab('Densidade de Frequência') + geom_vline(xintercept=c(median(salarios$salario), mean(salarios$salario))) + annotate("text", x=median(salarios$salario) + 0.3, y=0.05, label="Mediana", angle=90) + annotate("text", x=mean(salarios$salario) + 0.3, y=0.05, label="Média", angle=90) + geom_density(linetype = 2) + theme_classic()
+```
+
+##Análise visual da variável salário, utilizando a binarização a partir de uma função customizada
+
+### Definindo as funções gerais para criação de bins
+
+```{r funcoes para geracao de bins, echo = TRUE}
+
+#Freedman-Diaconis
+fd_bins <- function(x)
+{
+  bins <- 2*IQR(x)/((length(x))^(1/3))
+  return(bins)
+}
+
+#Sturge
+s_bins <- function(x)
+{
+  bins <- 3.49*sd(x)/((length(x))^(1/3))
+  return(bins)
+}
+```
+
+### Cálculo do número de bins a partir da função de Freedman-Diaconis
+
+```{r analisando salario visualmente com fd, echo = TRUE}
+salarios %>% dplyr::select(salario) %>% ggplot(aes(x=salario))+geom_histogram(aes(y = after_stat(density)) ,binwidth = fd_bins, fill = 'lightblue') + xlab('Salário') + ylab('Densidade de Frequência') + geom_vline(xintercept=c(median(salarios$salario), mean(salarios$salario))) + annotate("text", x=median(salarios$salario) + 0.3, y=0.05, label="Mediana", angle=90) + annotate("text", x=mean(salarios$salario) + 0.3, y=0.05, label="Média", angle=90) + geom_density(linetype = 2) + theme_classic()
+```
+
+
