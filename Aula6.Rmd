@@ -1,6 +1,6 @@
 ---
 title: "Aula6 - Visualização de dados"
-output: github_document
+output: pdf_document
 date: "2025-02-13"
 ---
 

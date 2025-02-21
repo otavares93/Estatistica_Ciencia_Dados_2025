@@ -18,9 +18,9 @@ library(tidyverse)
     ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
     ## ✔ dplyr     1.1.4     ✔ readr     2.1.5
     ## ✔ forcats   1.0.0     ✔ stringr   1.5.1
-    ## ✔ ggplot2   3.4.4     ✔ tibble    3.2.1
-    ## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-    ## ✔ purrr     1.0.2     
+    ## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+    ## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+    ## ✔ purrr     1.0.4     
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
@@ -30,6 +30,10 @@ library(tidyverse)
 library(dlookr)
 ```
 
+    ## Registered S3 methods overwritten by 'dlookr':
+    ##   method          from  
+    ##   plot.transform  scales
+    ##   print.transform scales
     ## 
     ## Attaching package: 'dlookr'
     ## 
@@ -83,7 +87,7 @@ kable(head(salarios))
 | 5 | solteiro | ensino fundamental | NA | 6.26 | 40 | 7 | outra |
 | 6 | casado | ensino fundamental | 0 | 6.66 | 28 | 0 | interior |
 
-\###Identificando os tipos de cada variável na base
+### Identificando os tipos de cada variável na base
 
 Para identificar os tipos de cada variável na base, vamos utilizar a
 função diagnose do pacote dlookr e reportar o tipo de cada um para
@@ -327,7 +331,7 @@ salarios %>% dplyr::select(salario) %>% ggplot(aes(x=salario))+geom_histogram(ae
 \### Adicionando a densidade estimada via kernel à visualização
 
 ``` r
-salarios %>% dplyr::select(salario) %>% ggplot(aes(x=salario))+geom_histogram(aes(y = after_stat(density)) ,bins = 5, fill = 'lightblue') + xlab('Salário') + ylab('Densidade de Frequência') + geom_vline(xintercept=c(median(salarios$salario), mean(salarios$salario))) + annotate("text", x=median(salarios$salario) + 0.3, y=0.05, label="Mediana", angle=90) + annotate("text", x=mean(salarios$salario) + 0.3, y=0.05, label="Média", angle=90) + geom_density(linetype = 2) + theme_classic()
+salarios %>% dplyr::select(salario) %>% ggplot(aes(x=salario))+geom_histogram(aes(y = after_stat(density)) , bins = 5, fill = 'lightblue') + xlab('Salário') + ylab('Densidade de Frequência') + geom_vline(xintercept=c(median(salarios$salario), mean(salarios$salario))) + annotate("text", x=median(salarios$salario) + 0.3, y=0.05, label="Mediana", angle=90) + annotate("text", x=mean(salarios$salario) + 0.3, y=0.05, label="Média", angle=90) + geom_density(linetype = 2) + theme_classic()
 ```
 
 ![](Aula7_files/figure-gfm/analisando%20salario%20visualmente%20com%20kernel%20-1.png)<!-- -->
@@ -360,3 +364,15 @@ salarios %>% dplyr::select(salario) %>% ggplot(aes(x=salario))+geom_histogram(ae
 ```
 
 ![](Aula7_files/figure-gfm/analisando%20salario%20visualmente%20com%20fd-1.png)<!-- -->
+
+### Lista com diversos gráficos de histograma para testar a amplitude do bin
+
+``` r
+hists.bins <- lapply(1:10, function(bwdt) salarios %>% dplyr::select(salario) %>% ggplot(aes(x = salario)) + geom_histogram(aes(y = after_stat(density)), binwidth = bwdt))
+```
+
+### Lista com diversos gráficos de histograma acompanhados de estimativas para densidade variando a função kernel
+
+``` r
+hists.kernel <- lapply(c("gaussian", "epanechnikov"), function(krn) salarios %>% dplyr::select(salario) %>% ggplot(aes(x=salario))+geom_histogram(aes(y = after_stat(density)) ,binwidth = fd_bins, fill = 'lightblue') + xlab('Salário') + ylab(paste('Densidade de Frequência', krn, sep = " - " )) + geom_vline(xintercept=c(median(salarios$salario), mean(salarios$salario))) + annotate("text", x=median(salarios$salario) + 0.3, y=0.05, label="Mediana", angle=90) + annotate("text", x=mean(salarios$salario) + 0.3, y=0.05, label="Média", angle=90) + geom_density(linetype = 2, kernel = krn) + theme_classic())
+```

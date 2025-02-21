@@ -3,6 +3,8 @@ title: "Análise descritiva de uma base de dados"
 author: "Otto Tavares"
 date: "2023-02-13"
 output: github_document
+#latex_engine: lualatex
+
 ---
 
 ```{r setup, include=FALSE}
@@ -131,7 +133,7 @@ salarios %>% dplyr::select(salario) %>% ggplot(aes(x=salario))+geom_histogram(ae
 ### Adicionando a densidade estimada via kernel à visualização
 
 ```{r analisando salario visualmente com kernel , echo = TRUE}
-salarios %>% dplyr::select(salario) %>% ggplot(aes(x=salario))+geom_histogram(aes(y = after_stat(density)) ,bins = 5, fill = 'lightblue') + xlab('Salário') + ylab('Densidade de Frequência') + geom_vline(xintercept=c(median(salarios$salario), mean(salarios$salario))) + annotate("text", x=median(salarios$salario) + 0.3, y=0.05, label="Mediana", angle=90) + annotate("text", x=mean(salarios$salario) + 0.3, y=0.05, label="Média", angle=90) + geom_density(linetype = 2) + theme_classic()
+salarios %>% dplyr::select(salario) %>% ggplot(aes(x=salario))+geom_histogram(aes(y = after_stat(density)) , bins = 5, fill = 'lightblue') + xlab('Salário') + ylab('Densidade de Frequência') + geom_vline(xintercept=c(median(salarios$salario), mean(salarios$salario))) + annotate("text", x=median(salarios$salario) + 0.3, y=0.05, label="Mediana", angle=90) + annotate("text", x=mean(salarios$salario) + 0.3, y=0.05, label="Média", angle=90) + geom_density(linetype = 2) + theme_classic()
 ```
 
 ##Análise visual da variável salário, utilizando a binarização a partir de uma função customizada
@@ -161,4 +163,16 @@ s_bins <- function(x)
 salarios %>% dplyr::select(salario) %>% ggplot(aes(x=salario))+geom_histogram(aes(y = after_stat(density)) ,binwidth = fd_bins, fill = 'lightblue') + xlab('Salário') + ylab('Densidade de Frequência') + geom_vline(xintercept=c(median(salarios$salario), mean(salarios$salario))) + annotate("text", x=median(salarios$salario) + 0.3, y=0.05, label="Mediana", angle=90) + annotate("text", x=mean(salarios$salario) + 0.3, y=0.05, label="Média", angle=90) + geom_density(linetype = 2) + theme_classic()
 ```
 
+### Lista com diversos gráficos de histograma para testar a amplitude do bin
 
+```{r analisando salario visualmente para varios bins, echo = TRUE}
+hists.bins <- lapply(1:10, function(bwdt) salarios %>% dplyr::select(salario) %>% ggplot(aes(x = salario)) + geom_histogram(aes(y = after_stat(density)), binwidth = bwdt))
+```
+
+### Lista com diversos gráficos de histograma acompanhados de estimativas para densidade variando a função kernel
+
+```{r analisando salario visualmente para varias funcoes kernel, echo = TRUE}
+
+hists.kernel <- lapply(c("gaussian", "epanechnikov"), function(krn) salarios %>% dplyr::select(salario) %>% ggplot(aes(x=salario))+geom_histogram(aes(y = after_stat(density)) ,binwidth = fd_bins, fill = 'lightblue') + xlab('Salário') + ylab(paste('Densidade de Frequência', krn, sep = " - " )) + geom_vline(xintercept=c(median(salarios$salario), mean(salarios$salario))) + annotate("text", x=median(salarios$salario) + 0.3, y=0.05, label="Mediana", angle=90) + annotate("text", x=mean(salarios$salario) + 0.3, y=0.05, label="Média", angle=90) + geom_density(linetype = 2, kernel = krn) + theme_classic())
+
+```
