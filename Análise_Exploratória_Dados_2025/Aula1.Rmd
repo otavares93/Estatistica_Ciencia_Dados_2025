@@ -1,0 +1,162 @@
+---
+title: "Visualização da Distribuição de Dados"
+author: "Otto Tavares"
+date: "2025-03-11"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Introdução
+
+```{r importando bibliotecas, echo = TRUE}
+library(tidyverse)
+library(purrr)
+library(dlookr)
+library(summarytools)
+library(readxl)
+library(knitr)
+library(data.table)
+library(ggpubr)
+library(corrplot)
+library(rcompanion)
+```
+
+
+```{r importando dados, echo = FALSE}
+crimes <- readr::read_csv2("/Users/ottotavares/Library/Mobile Documents/com~apple~CloudDocs/Documents/infnet/Análise Exploratoria de Dados/dados_utilizados/BaseDPEvolucaoMensalCisp.csv", locale = readr::locale(encoding = "latin1"))
+```
+# Limpando os dados e realizando diagnóstico
+
+```{r filtrando os dados e descrevendo a base, echo = FALSE}
+
+crimes.aisp <- crimes %>% dplyr::select(CISP, mes, ano,  AISP,  RISP, roubo_transeunte, roubo_celular, posse_drogas) %>% dplyr::mutate(mes.ano = as.IDate(paste("01", mes, ano, sep = "-"), format = "%d-%m-%Y")) %>% dplyr::filter(mes.ano %in% c(as.IDate("01-12-2019",format = "%d-%m-%Y"), as.IDate("01-12-2020",format = "%d-%m-%Y"), as.IDate("01-12-2021",format = "%d-%m-%Y") ,as.IDate("01-12-2022",format = "%d-%m-%Y"))) %>% dplyr::group_by(AISP, mes.ano) %>% dplyr::summarise(roubo_transeunte = sum(roubo_transeunte), roubo_celular = sum(roubo_celular), posse_drogas = sum(posse_drogas))
+
+crimes.aisp <- crimes.aisp %>% dplyr::left_join(crimes %>% dplyr::select(AISP, Regiao, mes, ano) %>% 
+dplyr::mutate(mes.ano = as.IDate(paste("01", mes, ano, sep = "-"), format = "%d-%m-%Y")) %>% dplyr::filter(mes.ano %in% c(as.IDate("01-12-2019",format = "%d-%m-%Y"), as.IDate("01-12-2020",format = "%d-%m-%Y"), as.IDate("01-12-2021",format = "%d-%m-%Y") ,as.IDate("01-12-2022",format = "%d-%m-%Y"))) %>% dplyr::distinct(AISP, mes.ano, Regiao), by = c("AISP" = "AISP", "mes.ano"="mes.ano"))
+
+crimes.aisp %>% dlookr::diagnose()
+
+```
+
+# Descrição via boxplot e tabelas de contingência
+
+```{r descrevendo a base com box plot roubo transeunte, echo = FALSE}
+
+crimes.aisp %>% ggplot(aes(x = as.factor(AISP), color = Regiao)) + geom_boxplot(aes(y = roubo_transeunte)) + xlab('Batalhões') + ylab('Roubo à Transeunte')
+```
+
+```{r descrevendo a base com box plot roubo celular, echo = FALSE}
+
+crimes.aisp %>% ggplot(aes(x = as.factor(AISP), color = Regiao)) + geom_boxplot(aes(y = roubo_celular)) + xlab('Batalhões') + ylab('Roubo de Celular')
+```
+
+```{r descrevendo a base com box plot roubo transeunte por regiao, echo = FALSE}
+
+crimes.aisp %>% ggplot(aes(x = as.factor(Regiao))) + geom_violin(aes(y = roubo_transeunte)) + xlab('Batalhões') + ylab('Roubo à Transeunte') + facet_wrap(~mes.ano)
+
+```
+
+
+```{r tabelas de contingência, echo = FALSE}
+
+summarytools::ctable(x = crimes.aisp$mes.ano, 
+       y = crimes.aisp$Regiao, 
+       prop = "t") 
+
+```
+```{r tabelas de contingência batalhao vs regiao, echo = FALSE}
+
+#summarytools::ctable(x = factor(crimes.aisp$AISP), 
+#       y = crimes.aisp$Regiao,
+#       prop = "t") 
+
+```
+
+
+# Construindo os histogramas da Aula 1
+
+```{r filtrando os dados e visualizando dists., echo = FALSE}
+
+fd <- function(x) {
+  n <-length(x)
+  return((2*IQR(x))/n^(1/3))
+}
+
+sr <- function(x) {
+  n <-length(x)
+  return((3.49*sd(x))/n^(1/3))
+}
+
+#crimes.aisp <- crimes %>% dplyr::select(CISP, mes, ano,  AISP,  RISP, roubo_transeunte) %>% dplyr::mutate(mes.ano = as.IDate(paste("01", mes, ano, sep = "-"), format = "%d-%m-%Y")) %>% dplyr::group_by(AISP, mes.ano) %>% dplyr::summarise(roubo_transeunte = sum(roubo_transeunte))
+
+#Calculando os histogramas para o mesmo evento em diferentes instantes de tempo
+
+crimes.aisp %>% ggplot(aes(x = roubo_transeunte)) + geom_histogram(aes(y = after_stat(density)), binwidth=fd, fill = 'lightblue') + facet_wrap(~mes.ano)
+```
+
+# Aplicando estimativa de densidade via kernel, através do kernel de epanechnikov
+
+```{r filtrando os dados e visualizando dists. com kernel, echo = FALSE}
+#Calculando os histogramas para o mesmo evento em diferentes instantes de tempo
+
+crimes.aisp %>% ggplot(aes(x = roubo_transeunte)) + geom_histogram(aes(y = after_stat(density)), binwidth=fd, fill = 'lightblue') + geom_density(kernel = 'epanechnikov')+ facet_wrap(~mes.ano)
+```
+
+
+# Calculando a distribuição acumulada empírica do fenômeno observado
+
+```{r filtrando os dados e visualizando dists. acumuladas, echo = FALSE}
+
+crimes.aisp %>% ggplot(aes(x = roubo_transeunte)) +stat_ecdf(geom = "step") + geom_vline(data = crimes.aisp %>% dplyr::group_by(mes.ano) %>% dplyr::summarize(roubo_transeunte_md = median(roubo_transeunte)), aes(xintercept=roubo_transeunte_md)) + facet_wrap(~mes.ano) + theme_bw()
+```
+
+```{r calculando as medianas, echo = FALSE}
+
+crimes.aisp %>% dplyr::group_by(mes.ano) %>% dplyr::summarize(roubo_transeunte_md = median(roubo_transeunte))
+```
+
+
+# Calculando a dispersão e as correlações
+
+```{r calculando dispersao para as duas datas, echo = FALSE}
+
+crimes.aisp %>% ggplot(aes(x = roubo_transeunte, y = roubo_celular)) +geom_point() + facet_wrap(~mes.ano) + stat_cor(method="pearson") + xlab('Roubo a Transeunte') + ylab('Roubo de Celular')
+
+#crimes.aisp %>% ggplot(aes(x = roubo_transeunte, y = roubo_celular)) +geom_point() + facet_wrap(~mes.ano) + xlab('Roubo a Transeunte') + ylab('Roubo de Celular')
+```
+
+```{r analise temporal de roubo a transeunte vs roubo celular para o estado, echo = FALSE}
+
+crimes %>% dplyr::select(CISP, mes, ano,  AISP,  RISP, roubo_transeunte, roubo_celular) %>% dplyr::mutate(mes.ano = as.IDate(paste("01", mes, ano, sep = "-"), format = "%d-%m-%Y")) %>% dplyr::group_by(mes.ano) %>% dplyr::summarise(roubo_transeunte = sum(roubo_transeunte), roubo_celular = sum(roubo_celular)) %>% dplyr::filter(mes.ano > as.IDate("01-01-2019",format = "%d-%m-%Y")) %>% ggplot(aes(x = mes.ano)) + geom_line(aes(y = roubo_transeunte, color = "Roubo Transeunte")) + geom_point(data = crimes.aisp %>% dplyr::group_by(mes.ano) %>% dplyr::summarise(roubo_transeunte = sum(roubo_transeunte), roubo_celular = sum(roubo_celular)), aes(y = roubo_transeunte, color = "Roubo Transeunte")) + geom_line(aes(y = roubo_celular, color = "Roubo Celular")) + geom_point(data = crimes.aisp  %>% dplyr::group_by(mes.ano) %>% dplyr::summarise(roubo_transeunte = sum(roubo_transeunte), roubo_celular = sum(roubo_celular)), aes(y = roubo_celular, color = "Roubo Celular")) + ylab("# de Roubos (Transeuntes e Celulares)") + xlab("Horizonte Temporal") + labs(title = "Evolução temporal de roubos no Estado do Rio de Janeiro") + theme_bw()
+
+```
+
+
+```{r analise temporal de roubo a transeunte vs roubo celular para um dado batalhao, echo = FALSE}
+
+crimes %>% dplyr::select(CISP, mes, ano,  AISP,  RISP, roubo_transeunte, roubo_celular) %>% dplyr::mutate(mes.ano = as.IDate(paste("01", mes, ano, sep = "-"), format = "%d-%m-%Y")) %>% dplyr::group_by(AISP, mes.ano) %>% dplyr::summarise(roubo_transeunte = sum(roubo_transeunte), roubo_celular = sum(roubo_celular)) %>% dplyr::filter(mes.ano > as.IDate("01-01-2019",format = "%d-%m-%Y") & AISP == 15) %>% ggplot(aes(x = mes.ano)) + geom_line(aes(y = roubo_transeunte, color = "Roubo Transeunte")) + geom_point(data = crimes.aisp %>% dplyr::filter(AISP == 15), aes(y = roubo_transeunte, color = "Roubo Transeunte")) + geom_line(aes(y = roubo_celular, color = "Roubo Celular")) + geom_point(data = crimes.aisp %>% dplyr::filter(AISP == 15), aes(y = roubo_celular, color = "Roubo Celular")) + ylab("# de Roubos (Transeuntes e Celulares)") + xlab("Horizonte Temporal") + labs(title = "Evolução temporal para um batalhão selecionado (AISP = 15)") + theme_bw()
+
+```
+
+
+
+# Calculando a dispersão e as correlações
+
+```{r calculando corrplot pearson, echo = FALSE}
+
+crimes %>% dplyr::filter(mes_ano == "2022m12") %>% dplyr::select(roubo_veiculo, roubo_transeunte) %>% cor(., method = "pearson") %>% corrplot(., title = 'Pearson')
+
+```
+
+
+```{r calculando corrplot spearman, echo = FALSE}
+
+crimes %>% dplyr::filter(mes_ano == "2022m12") %>% dplyr::select(roubo_veiculo, roubo_transeunte) %>% cor(., method = "spearman") %>% corrplot(., title = 'Spearman')
+
+```
+
+

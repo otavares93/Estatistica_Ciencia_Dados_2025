@@ -1,7 +1,7 @@
 Análise descritiva de uma base de dados
 ================
 Otto Tavares
-21 February, 2025
+24 February, 2025
 
 ## Introdução
 
@@ -277,30 +277,30 @@ Para realizar essa análise, podemos utilizar a função descr do pacote
 summarytools, e posteriormente realizar a leitura desses dados.
 
 ``` r
-salarios %>% dplyr::select(salario) %>% summarytools::descr()
+salarios %>% dplyr::select(salario, idade_anos) %>% summarytools::descr()
 ```
 
     ## Descriptive Statistics  
-    ## salarios$salario  
+    ## salarios  
     ## N: 36  
     ## 
-    ##                     salario
-    ## ----------------- ---------
-    ##              Mean     11.12
-    ##           Std.Dev      4.59
-    ##               Min      4.00
-    ##                Q1      7.52
-    ##            Median     10.16
-    ##                Q3     14.27
-    ##               Max     23.30
-    ##               MAD      4.72
-    ##               IQR      6.51
-    ##                CV      0.41
-    ##          Skewness      0.60
-    ##       SE.Skewness      0.39
-    ##          Kurtosis     -0.33
-    ##           N.Valid     36.00
-    ##         Pct.Valid    100.00
+    ##                     idade_anos   salario
+    ## ----------------- ------------ ---------
+    ##              Mean        34.58     11.12
+    ##           Std.Dev         6.74      4.59
+    ##               Min        20.00      4.00
+    ##                Q1        30.00      7.52
+    ##            Median        34.50     10.16
+    ##                Q3        40.00     14.27
+    ##               Max        48.00     23.30
+    ##               MAD         7.41      4.72
+    ##               IQR        10.00      6.51
+    ##                CV         0.19      0.41
+    ##          Skewness        -0.06      0.60
+    ##       SE.Skewness         0.39      0.39
+    ##          Kurtosis        -0.76     -0.33
+    ##           N.Valid        36.00     36.00
+    ##         Pct.Valid       100.00    100.00
 
 É possível ver pelo critério de skewness discutido em aula, que o valor
 de 0.6 para assimetria, nos faz interpretar essa distribução como

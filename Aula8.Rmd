@@ -121,7 +121,7 @@ Já para a variável salários, podemos analisar a centralidade dos dados, diper
 Para realizar essa análise, podemos utilizar a função descr do pacote summarytools, e posteriormente realizar a leitura desses dados.
 
 ```{r desc variavel salario , echo = TRUE}
-salarios %>% dplyr::select(salario) %>% summarytools::descr()
+salarios %>% dplyr::select(salario, idade_anos) %>% summarytools::descr()
 ```
 
 É possível ver pelo critério de skewness discutido em aula, que o valor de 0.6 para assimetria, nos faz interpretar essa distribução como levemente assimétrica, com cauda à direita.
