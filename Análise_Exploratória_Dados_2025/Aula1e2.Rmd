@@ -1,7 +1,7 @@
 ---
 title: "Visualização da Distribuição de Dados"
 author: "Otto Tavares"
-date: "2025-03-11"
+date: "2023-02-13"
 output: github_document
 ---
 
@@ -54,13 +54,6 @@ crimes.aisp %>% ggplot(aes(x = as.factor(AISP), color = Regiao)) + geom_boxplot(
 crimes.aisp %>% ggplot(aes(x = as.factor(AISP), color = Regiao)) + geom_boxplot(aes(y = roubo_celular)) + xlab('Batalhões') + ylab('Roubo de Celular')
 ```
 
-```{r descrevendo a base com box plot roubo transeunte por regiao, echo = FALSE}
-
-crimes.aisp %>% ggplot(aes(x = as.factor(Regiao))) + geom_violin(aes(y = roubo_transeunte)) + xlab('Batalhões') + ylab('Roubo à Transeunte') + facet_wrap(~mes.ano)
-
-```
-
-
 ```{r tabelas de contingência, echo = FALSE}
 
 summarytools::ctable(x = crimes.aisp$mes.ano, 
@@ -76,6 +69,17 @@ summarytools::ctable(x = crimes.aisp$mes.ano,
 
 ```
 
+# Discussão da relação entre variáveis quantitativas e qualitativas
+
+```{r descrevendo a base com box plot roubo transeunte por regiao, echo = FALSE}
+
+crimes.aisp %>% ggplot(aes(x = as.factor(Regiao))) + geom_boxplot(aes(y = roubo_transeunte))+ xlab('Batalhões') + ylab('Roubo à Transeunte') + facet_wrap(~mes.ano)
+
+```
+
+```{r calculando o r-quadrado para essa relação, echo = FALSE}
+crimes.aisp %>% dplyr::group_by(mes.ano) %>% do(modelo = lm(roubo_transeunte ~ as.factor(Regiao), .)) %>% dplyr::mutate(r.ao.quadrado = summary(modelo)$r.squared) %>% dplyr::select(-modelo) %>% kable()
+```
 
 # Construindo os histogramas da Aula 1
 
@@ -120,14 +124,30 @@ crimes.aisp %>% dplyr::group_by(mes.ano) %>% dplyr::summarize(roubo_transeunte_m
 ```
 
 
-# Calculando a dispersão e as correlações
+# Calculando a dispersão e as correlações de Pearson
 
-```{r calculando dispersao para as duas datas, echo = FALSE}
+```{r calculando dispersao para as duas datas, echo = TRUE}
 
 crimes.aisp %>% ggplot(aes(x = roubo_transeunte, y = roubo_celular)) +geom_point() + facet_wrap(~mes.ano) + stat_cor(method="pearson") + xlab('Roubo a Transeunte') + ylab('Roubo de Celular')
-
-#crimes.aisp %>% ggplot(aes(x = roubo_transeunte, y = roubo_celular)) +geom_point() + facet_wrap(~mes.ano) + xlab('Roubo a Transeunte') + ylab('Roubo de Celular')
 ```
+
+# Calculando a dispersão e as correlações de Pearson e de Spearman
+
+## Pearson
+
+```{r calculando dispersao para análise de pearson em relação não linear, echo = TRUE}
+
+crimes.aisp %>% ggplot(aes(x = roubo_transeunte, y = posse_drogas)) +geom_point() + facet_wrap(~mes.ano) + stat_cor(method="pearson") + xlab('Roubo a Transeunte') + ylab('Posse de Drogas') + geom_smooth(method = "lm")
+```
+
+## Spearman
+
+```{r calculando dispersao para análise de separman em relação não linear, echo = TRUE}
+
+crimes.aisp %>% ggplot(aes(x = roubo_transeunte, y = posse_drogas)) +geom_point() + facet_wrap(~mes.ano) + stat_cor(method="spearman") + xlab('Roubo a Transeunte') + ylab('Posse de Drogas') + geom_smooth()
+```
+
+
 
 ```{r analise temporal de roubo a transeunte vs roubo celular para o estado, echo = FALSE}
 
