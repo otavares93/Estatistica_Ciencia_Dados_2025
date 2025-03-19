@@ -1,0 +1,178 @@
+---
+title: "Dados Faltantes"
+author: "Otto Tavares"
+date: "2025-03-17"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Introdução
+
+```{r importando bibliotecas, echo = TRUE, warnings=FALSE}
+library(tidyverse)
+library(purrr)
+library(dlookr)
+library(summarytools)
+library(readxl)
+library(knitr)
+library(data.table)
+library(ggpubr)
+library(corrplot)
+library(rcompanion)
+library(naniar)
+library(mice)
+library(simputation)
+```
+
+
+```{r importando dados, echo = FALSE, warning=FALSE}
+crimes <- readr::read_csv2("/Users/ottotavares/Library/Mobile Documents/com~apple~CloudDocs/Documents/infnet/Estatistica_Ciencia_Dados_2024/dados_auxiliares/BaseDPEvolucaoMensalCisp.csv", locale = readr::locale(encoding = "latin1"))
+```
+# Limpando os dados e realizando diagnóstico de dados faltantes
+
+1. Via diagnose, que já conhecemos, ou miss_var_summary da biblioteca naniar. Descrição estatística da distribuição de missing calculando as frequências relativas por variável
+
+2. Via visualização de dados faltantes através de um gráfico de barras percentual, gerado pela biblioteca naniar e função vis_miss
+
+3. Via ordenamento de variáveis com maior frequência de missing
+
+
+```{r filtrando os dados e descrevendo os dados faltantes, echo = TRUE}
+
+#1
+crimes %>% dlookr::diagnose() %>% kable()
+
+crimes %>% naniar::miss_var_summary() %>% kable()
+
+#2 - Limitada para bases muito grandes, filtramos apenas para dados de furtos
+crimes %>% dplyr::mutate(mes.ano = as.IDate(paste("01", mes, ano, sep = "-"), format = "%d-%m-%Y")) %>% dplyr::select(CISP, mes.ano, AISP, roubo_cx_eletronico:apreensao_drogas_sem_autor) %>% naniar::vis_miss()
+
+#3
+crimes %>% gg_miss_var()
+
+```
+
+# Realizando o teste de Little para checar se os dados faltantes são completamente aleatórios
+
+## Para os dados de furtos e roubos
+
+```{r teste de little para dados faltantes de roubos e furtos, echo = TRUE}
+crimes %>% dplyr::select(roubo_transeunte:total_furtos) %>% naniar::mcar_test()
+```
+## Para os dados de posse de drogas
+
+```{r teste de little para dados de drogas, echo = TRUE}
+crimes %>% dplyr::select(apreensao_drogas:apreensao_drogas_sem_autor) %>% naniar::mcar_test()
+```
+
+
+# Realizando análise da relação entre a distribuição de missing e das variáveis observadas
+
+## Para roubo de bicicleta
+
+```{r contagem por criterio de individuo para checar MAR 1, echo = TRUE}
+crimes %>%
+  dplyr::group_by(AISP, Regiao) %>% dplyr::filter(is.na(roubo_bicicleta)) %>%
+  dplyr::summarise(n = n()) %>% dplyr::ungroup() %>% 
+  dplyr::mutate(tot.miss = sum(n)) %>% dplyr::group_by(Regiao) %>% 
+  dplyr::mutate(tot.miss.regiao = sum(n), freq.intra.regiao = n/tot.miss.regiao, freq.regiao = tot.miss.regiao/tot.miss) %>% dplyr::arrange(desc(freq.regiao), desc(n)) %>% kable()
+```
+
+
+## Para posse de drogas
+
+```{r contagem por criterio de individuo para checar MAR 2, echo = TRUE}
+crimes %>%
+  dplyr::group_by(AISP, Regiao) %>% dplyr::filter(is.na(posse_drogas)) %>%
+  dplyr::summarise(n = n()) %>% dplyr::ungroup() %>% 
+  dplyr::mutate(tot.miss = sum(n)) %>% dplyr::group_by(Regiao) %>% 
+  dplyr::mutate(tot.miss.regiao = sum(n), freq.intra.regiao = n/tot.miss.regiao, freq.regiao = tot.miss.regiao/tot.miss) %>% dplyr::arrange(desc(freq.regiao), desc(n)) %>% kable()
+```
+
+```{r imputando dados com o knn para posse de drogas, echo = TRUE}
+crimes.aisp <- crimes %>% dplyr::mutate(mes.ano = as.IDate(paste("01", mes, ano, sep = "-"), format = "%d-%m-%Y")) %>% dplyr::group_by(AISP, mes.ano) %>%
+  dplyr::summarise_at(vars(apreensao_drogas:apreensao_drogas_sem_autor), sum)
+
+crimes.aisp.imp <- crimes.aisp %>% dplyr::group_by(AISP) %>% dplyr::select(mes.ano, apreensao_drogas:apreensao_drogas_sem_autor) %>% 
+  as.data.frame() %>% 
+  simputation::impute_knn(. ~ ., seed = 512) %>% dplyr::mutate_at(vars(apreensao_drogas:apreensao_drogas_sem_autor), as.numeric)
+
+```
+
+# Comparando a imputação dos dados com o realizado para posse de drogas para o método knn
+
+```{r comparando o input dos dados com o knn com o original, echo = TRUE}
+
+ultimo.missing <- crimes.aisp %>% dplyr::select(mes.ano, posse_drogas) %>% dplyr::filter(is.na(posse_drogas)) %>% last() %>% dplyr::select(mes.ano)
+
+crimes.aisp %>% dplyr::filter((mes.ano < as.IDate("2010-01-01")) & AISP == 23) %>% ggplot(aes(x = mes.ano)) + geom_line(aes(y = posse_drogas, color = "Posse Drogas")) + geom_line(aes(y = apreensao_drogas, color = "Apreensão de Drogas")) + geom_vline(xintercept=c(ultimo.missing$mes.ano)) +  annotate("text", x=ultimo.missing$mes.ano + 40, y=30, label="Fim do período com NA", angle=90)
+
+
+crimes.aisp.imp %>% dplyr::filter((mes.ano < as.IDate("2010-01-01")) & AISP == 23) %>% ggplot(aes(x = mes.ano)) + geom_line(aes(y = posse_drogas, color = "Posse Drogas")) + geom_line(aes(y = apreensao_drogas, color = "Apreensão de Drogas")) + geom_vline(xintercept=c(ultimo.missing$mes.ano)) + annotate("text", x=ultimo.missing$mes.ano + 40, y=30, label="Fim do período com NA", angle=90) + labs(title = "Imputação de dados com KNN para a AISP 23")
+
+
+```
+
+
+# Comparando a imputação dos dados com o realizado para posse de drogas para o método de imputação multipla
+
+```{r comparando o input dos dados com o pmm com o original, echo = TRUE}
+
+imp.multiplo <- mice(crimes.aisp, print = FALSE, m = 10, max.iter = 5, method = "pmm" , seed   = 512) 
+
+stripplot(imp.multiplo, pch = c(21, 20), cex = c(1, 1.5))
+
+```
+
+
+
+
+# Comparando a imputação dos dados com o realizado para os dados de salário para o método de imputação multipla
+
+## Com o método pmm
+
+```{r multiplo input para os dados de salario pmm, echo = TRUE}
+
+salarios <- readxl::read_excel("/Users/ottotavares/Library/Mobile Documents/com~apple~CloudDocs/Documents/infnet/Estatistica_Ciencia_Dados_2024/dados_auxiliares/dados_bussab_m.xlsx")
+
+imp <- mice(salarios %>% dplyr::mutate(estado_civil = as.factor(estado_civil), Grau_de_instrucao =   as.factor(Grau_de_instrucao), regiao = as.factor(regiao)), print = FALSE, m = 5, max.iter = 5, method = "pmm" , seed   = 512) 
+
+names(imp$imp$n_filhos) <- paste("imp", names(imp$imp$n_filhos), sep = "_")
+imp_nfilhos <- imp$imp$n_filhos %>% tidyr::pivot_longer(cols = imp_1:ncol(imp$imp$n_filhos), values_to = "n_filhos", names_to   = "imp") %>% arrange(imp)
+
+#Densidade orignal
+salarios %>% dplyr::select(n_filhos) %>% ggplot(aes(x=n_filhos, y = after_stat(density))) + geom_density(linetype = 2) + xlab('numero de filhos') + ylab('Densidade de Frequência') + theme_classic()
+
+#Densidade dos inputs
+ggplot(imp_nfilhos, aes(x = n_filhos, y = after_stat(density), colour = imp)) + geom_density(linetype = 2) + xlab('numero de    filhos') + ylab('Densidade de Frequência') + theme_classic()
+
+#preenchimento dos dados
+stripplot(imp, pch = c(21, 20), cex = c(1, 1.5))
+
+```
+
+## Com o método midastouch (pmm ponderado)
+
+```{r multiplo input para os dados de salario midastouch, echo = TRUE}
+
+salarios <- readxl::read_excel("/Users/ottotavares/Library/Mobile Documents/com~apple~CloudDocs/Documents/infnet/Estatistica_Ciencia_Dados_2024/dados_auxiliares/dados_bussab_m.xlsx")
+
+imp <- mice(salarios %>% dplyr::mutate(estado_civil = as.factor(estado_civil), Grau_de_instrucao =   as.factor(Grau_de_instrucao), regiao = as.factor(regiao)), print = FALSE, m = 5, max.iter = 5, method = "midastouch" , seed   = 512) 
+
+names(imp$imp$n_filhos) <- paste("imp", names(imp$imp$n_filhos), sep = "_")
+imp_nfilhos <- imp$imp$n_filhos %>% tidyr::pivot_longer(cols = imp_1:ncol(imp$imp$n_filhos), values_to = "n_filhos", names_to   = "imp") %>% arrange(imp)
+
+#Densidade orignal
+salarios %>% dplyr::select(n_filhos) %>% ggplot(aes(x=n_filhos, y = after_stat(density))) + geom_density(linetype = 2) + xlab('numero de filhos') + ylab('Densidade de Frequência') + theme_classic()
+
+#Densidade dos inputs
+ggplot(imp_nfilhos, aes(x = n_filhos, y = after_stat(density), colour = imp)) + geom_density(linetype = 2) + xlab('numero de    filhos') + ylab('Densidade de Frequência') + theme_classic()
+
+#preenchimento dos dados
+stripplot(imp, pch = c(21, 20), cex = c(1, 1.5))
+
+```
