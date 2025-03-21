@@ -1,0 +1,384 @@
+---
+title: "Análise de dados criminais - Teste de Hipótese"
+author: "Otto Tavares"
+date: "2025-03-20"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Introdução
+
+```{r importando bibliotecas, echo = TRUE}
+library(tidyverse)
+library(purrr)
+library(dlookr)
+library(summarytools)
+library(readxl)
+library(knitr)
+library(data.table)
+library(ggpubr)
+library(corrplot)
+library(rcompanion)
+```
+
+
+```{r importando dados, echo = FALSE}
+crimes <- readr::read_csv2("/Users/ottotavares/Library/Mobile Documents/com~apple~CloudDocs/Documents/infnet/Estatistica_Ciencia_Dados_2024/dados_auxiliares/BaseDPEvolucaoMensalCisp.csv", locale = readr::locale(encoding = "latin1"))
+```
+# Limpando os dados e realizando diagnóstico
+
+```{r filtrando os dados e descrevendo a base, echo = FALSE}
+
+crimes.aisp <- crimes %>% dplyr::select(CISP, mes, ano,  AISP,  RISP, roubo_transeunte, roubo_celular, posse_drogas) %>% dplyr::mutate(mes.ano = as.IDate(paste("01", mes, ano, sep = "-"), format = "%d-%m-%Y")) %>% dplyr::filter(mes.ano %in% c(as.IDate("01-12-2019",format = "%d-%m-%Y"), as.IDate("01-12-2020",format = "%d-%m-%Y"), as.IDate("01-12-2021",format = "%d-%m-%Y") ,as.IDate("01-12-2022",format = "%d-%m-%Y"))) %>% dplyr::group_by(AISP, mes.ano) %>% dplyr::summarise(roubo_transeunte = sum(roubo_transeunte), roubo_celular = sum(roubo_celular), posse_drogas = sum(posse_drogas))
+
+crimes.aisp <- crimes.aisp %>% dplyr::left_join(crimes %>% dplyr::select(AISP, Regiao, mes, ano) %>% 
+dplyr::mutate(mes.ano = as.IDate(paste("01", mes, ano, sep = "-"), format = "%d-%m-%Y")) %>% dplyr::filter(mes.ano %in% c(as.IDate("01-12-2019",format = "%d-%m-%Y"), as.IDate("01-12-2020",format = "%d-%m-%Y"), as.IDate("01-12-2021",format = "%d-%m-%Y") ,as.IDate("01-12-2022",format = "%d-%m-%Y"))) %>% dplyr::distinct(AISP, mes.ano, Regiao), by = c("AISP" = "AISP", "mes.ano"="mes.ano"))
+
+crimes.aisp %>% dlookr::diagnose()
+
+```
+
+# Descrição via boxplot e tabelas de contingência
+
+```{r descrevendo a base com box plot roubo transeunte, echo = FALSE}
+
+crimes.aisp %>% ggplot(aes(x = as.factor(AISP), color = Regiao)) + geom_boxplot(aes(y = roubo_transeunte)) + xlab('Batalhões') + ylab('Roubo à Transeunte')
+```
+
+```{r descrevendo a base com box plot roubo celular, echo = FALSE}
+
+crimes.aisp %>% ggplot(aes(x = as.factor(AISP), color = Regiao)) + geom_boxplot(aes(y = roubo_celular)) + xlab('Batalhões') + ylab('Roubo de Celular')
+```
+
+```{r descrevendo a base com box plot roubo transeunte por regiao, echo = FALSE}
+
+crimes.aisp %>% ggplot(aes(x = as.factor(Regiao))) + geom_violin(aes(y = roubo_transeunte)) + xlab('Batalhões') + ylab('Roubo à Transeunte') + facet_wrap(~mes.ano)
+
+```
+
+
+```{r tabelas de contingência, echo = FALSE}
+
+summarytools::ctable(x = crimes.aisp$mes.ano, 
+       y = crimes.aisp$Regiao, 
+       prop = "t") 
+
+```
+```{r tabelas de contingência batalhao vs regiao, echo = FALSE}
+
+#summarytools::ctable(x = factor(crimes.aisp$AISP), 
+#       y = crimes.aisp$Regiao,
+#       prop = "t") 
+
+```
+
+
+# Construindo os histogramas da Aula 1
+
+```{r filtrando os dados e visualizando dists., echo = FALSE}
+
+fd <- function(x) {
+  n <-length(x)
+  return((2*IQR(x))/n^(1/3))
+}
+
+sr <- function(x) {
+  n <-length(x)
+  return((3.49*sd(x))/n^(1/3))
+}
+
+#crimes.aisp <- crimes %>% dplyr::select(CISP, mes, ano,  AISP,  RISP, roubo_transeunte) %>% dplyr::mutate(mes.ano = as.IDate(paste("01", mes, ano, sep = "-"), format = "%d-%m-%Y")) %>% dplyr::group_by(AISP, mes.ano) %>% dplyr::summarise(roubo_transeunte = sum(roubo_transeunte))
+
+#Calculando os histogramas para o mesmo evento em diferentes instantes de tempo
+
+crimes.aisp %>% ggplot(aes(x = roubo_transeunte)) + geom_histogram(aes(y = after_stat(density)), binwidth=fd, fill = 'lightblue') + facet_wrap(~mes.ano)
+```
+
+# Aplicando estimativa de densidade via kernel, através do kernel de epanechnikov
+
+```{r filtrando os dados e visualizando dists. com kernel, echo = FALSE}
+#Calculando os histogramas para o mesmo evento em diferentes instantes de tempo
+
+crimes.aisp %>% ggplot(aes(x = roubo_transeunte)) + geom_histogram(aes(y = after_stat(density)), binwidth=fd, fill = 'lightblue') + geom_density(kernel = 'epanechnikov')+ facet_wrap(~mes.ano)
+```
+
+
+# Calculando a distribuição acumulada empírica do fenômeno observado
+
+```{r filtrando os dados e visualizando dists. acumuladas, echo = FALSE}
+
+crimes.aisp %>% ggplot(aes(x = roubo_transeunte)) +stat_ecdf(geom = "step") + geom_vline(data = crimes.aisp %>% dplyr::group_by(mes.ano) %>% dplyr::summarize(roubo_transeunte_md = median(roubo_transeunte)), aes(xintercept=roubo_transeunte_md)) + facet_wrap(~mes.ano) + theme_bw()
+```
+
+```{r calculando as medianas, echo = FALSE}
+
+crimes.aisp %>% dplyr::group_by(mes.ano) %>% dplyr::summarize(roubo_transeunte_md = median(roubo_transeunte))
+```
+
+
+# Calculando a dispersão e as correlações de Pearson
+
+```{r calculando dispersao para as duas datas, echo = FALSE}
+
+crimes.aisp %>% ggplot(aes(x = roubo_transeunte, y = roubo_celular)) +geom_point() + facet_wrap(~mes.ano) + stat_cor(method="pearson") + xlab('Roubo a Transeunte') + ylab('Roubo de Celular')
+```
+
+# Calculando a dispersão e as correlações de Pearson e de Spearman
+
+## Pearson
+
+```{r calculando dispersao para análise de pearson em relação não linear, echo = FALSE}
+
+crimes.aisp %>% ggplot(aes(x = roubo_transeunte, y = posse_drogas)) +geom_point() + facet_wrap(~mes.ano) + stat_cor(method="pearson") + xlab('Roubo a Transeunte') + ylab('Posse de Drogas') + geom_smooth(method = "lm")
+```
+
+## Spearman
+
+```{r calculando dispersao para análise de separman em relação não linear, echo = FALSE}
+
+crimes.aisp %>% ggplot(aes(x = roubo_transeunte, y = posse_drogas)) +geom_point() + facet_wrap(~mes.ano) + stat_cor(method="spearman") + xlab('Roubo a Transeunte') + ylab('Posse de Drogas') + geom_smooth()
+```
+
+
+
+```{r analise temporal de roubo a transeunte vs roubo celular para o estado, echo = FALSE}
+
+crimes %>% dplyr::select(CISP, mes, ano,  AISP,  RISP, roubo_transeunte, roubo_celular) %>% dplyr::mutate(mes.ano = as.IDate(paste("01", mes, ano, sep = "-"), format = "%d-%m-%Y")) %>% dplyr::group_by(mes.ano) %>% dplyr::summarise(roubo_transeunte = sum(roubo_transeunte), roubo_celular = sum(roubo_celular)) %>% dplyr::filter(mes.ano > as.IDate("01-01-2019",format = "%d-%m-%Y")) %>% ggplot(aes(x = mes.ano)) + geom_line(aes(y = roubo_transeunte, color = "Roubo Transeunte")) + geom_point(data = crimes.aisp %>% dplyr::group_by(mes.ano) %>% dplyr::summarise(roubo_transeunte = sum(roubo_transeunte), roubo_celular = sum(roubo_celular)), aes(y = roubo_transeunte, color = "Roubo Transeunte")) + geom_line(aes(y = roubo_celular, color = "Roubo Celular")) + geom_point(data = crimes.aisp  %>% dplyr::group_by(mes.ano) %>% dplyr::summarise(roubo_transeunte = sum(roubo_transeunte), roubo_celular = sum(roubo_celular)), aes(y = roubo_celular, color = "Roubo Celular")) + ylab("# de Roubos (Transeuntes e Celulares)") + xlab("Horizonte Temporal") + labs(title = "Evolução temporal de roubos no Estado do Rio de Janeiro") + theme_bw()
+
+```
+
+
+```{r analise temporal de roubo a transeunte vs roubo celular para um dado batalhao, echo = FALSE}
+
+crimes %>% dplyr::select(CISP, mes, ano,  AISP,  RISP, roubo_transeunte, roubo_celular) %>% dplyr::mutate(mes.ano = as.IDate(paste("01", mes, ano, sep = "-"), format = "%d-%m-%Y")) %>% dplyr::group_by(AISP, mes.ano) %>% dplyr::summarise(roubo_transeunte = sum(roubo_transeunte), roubo_celular = sum(roubo_celular)) %>% dplyr::filter(mes.ano > as.IDate("01-01-2019",format = "%d-%m-%Y") & AISP == 15) %>% ggplot(aes(x = mes.ano)) + geom_line(aes(y = roubo_transeunte, color = "Roubo Transeunte")) + geom_point(data = crimes.aisp %>% dplyr::filter(AISP == 15), aes(y = roubo_transeunte, color = "Roubo Transeunte")) + geom_line(aes(y = roubo_celular, color = "Roubo Celular")) + geom_point(data = crimes.aisp %>% dplyr::filter(AISP == 15), aes(y = roubo_celular, color = "Roubo Celular")) + ylab("# de Roubos (Transeuntes e Celulares)") + xlab("Horizonte Temporal") + labs(title = "Evolução temporal para um batalhão selecionado (AISP = 15)") + theme_bw()
+
+```
+
+
+
+# Calculando a dispersão e as correlações
+
+```{r calculando corrplot pearson, echo = FALSE}
+
+crimes %>% dplyr::filter(mes_ano == "2022m12") %>% dplyr::select(roubo_veiculo, roubo_transeunte) %>% cor(., method = "pearson") %>% corrplot(., title = 'Pearson')
+
+```
+
+
+```{r calculando corrplot spearman, echo = FALSE}
+
+crimes %>% dplyr::filter(mes_ano == "2022m12") %>% dplyr::select(roubo_veiculo, roubo_transeunte) %>% cor(., method = "spearman") %>% corrplot(., title = 'Spearman')
+
+```
+
+# Realizando o teste de Hipótese (Há evidência estatística na queda de roubo a transeunte após a pandemia?) 
+
+## Teste de Shapiro Wilk (para checar normalidade) nas amostras pré e pós pandemia
+
+A hipótese nula aqui é: A distribuição de roubos a transeunte por batalhão segue distribuição normal no mês selecionado para representar o pré pandemia.
+
+A hipótese alternativa: A distribuição de roubos a transeunte por batalhão não segue distribuição normal no mês selecionado para representar o pré pandemia.
+
+### Pré Pandemia
+```{r shapiro wilk pre pandemia, echo = TRUE}
+
+pre.pandemia <- crimes.aisp %>% dplyr::filter(mes.ano %in% as.IDate("01-12-2019",format = "%d-%m-%Y")) %>% dplyr::select(roubo_transeunte) 
+shapiro.test(pre.pandemia$roubo_transeunte)
+
+```
+
+### Realizando o QQ-Plot do pré pandemia para ilustrar sua utilização
+
+```{r qqplot pre pandemia, echo = TRUE}
+
+qqnorm(pre.pandemia$roubo_transeunte)
+
+```
+
+### Pós Pandemia (Primeiro ano de Pandemia - 01/12/2020)
+
+A hipótese nula aqui é: A distribuição de roubos a transeunte por batalhão segue distribuição normal no mês selecionado para representar o pós pandemia.
+
+A hipótese alternativa: A distribuição de roubos a transeunte por batalhão não segue distribuição normal no mês selecionado para representar o pós pandemia.
+
+```{r shapiro wilk pos pandemia (primeiro ano), echo = FALSE}
+
+pos.pandemia <- crimes.aisp %>% dplyr::filter(mes.ano %in% as.IDate("01-12-2020",format = "%d-%m-%Y")) %>% dplyr::select(roubo_transeunte)
+shapiro.test(pos.pandemia$roubo_transeunte)
+```
+
+### Realizando o QQ-Plot do pós pandemia para ilustrar sua utilização
+
+```{r qqplot pos pandemia, echo = FALSE}
+
+qqnorm(pos.pandemia$roubo_transeunte)
+
+```
+
+### Teste de Wilcoxon para checar o pareamento - (Pré vs. Primeiro ano de Pandemia - 01/12/2020)
+
+Realizado o teste de Wilcoxon para checar o pareamento entre as distribuições de roubo a transeunte do pré e do pós pandemia.
+
+A hipótese nula aqui é: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós é igual a zero.
+
+A hipótese alternativa: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós não é igual a zero.
+
+```{r wilcox pos pandemia (primeiro ano), echo = TRUE}
+wilcox.test(pre.pandemia$roubo_transeunte, pos.pandemia$roubo_transeunte, paired = T, exact = F)
+```
+
+### Teste de Wilcoxon para checar o pareamento (Maior que) - (Pré vs. Primeiro ano de Pandemia - 01/12/2020)
+
+A hipótese nula aqui é: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós é igual a zero.
+
+A hipótese alternativa: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós é maior do que zero.
+
+```{r wilcox pos pandemia maior que (primeiro ano), echo = TRUE}
+wilcox.test(pre.pandemia$roubo_transeunte, pos.pandemia$roubo_transeunte, paired = T, exact = F, alternative = "greater")
+```
+
+### Teste de Wilcoxon para checar o pareamento (Menor que) - (Pré vs. Primeiro ano de Pandemia - 01/12/2020)
+
+A hipótese nula aqui é: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós é igual a zero.
+
+A hipótese alternativa: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós é menor do que zero.
+
+```{r wilcox pos pandemia menor que (primeiro ano), echo = TRUE}
+wilcox.test(pre.pandemia$roubo_transeunte, pos.pandemia$roubo_transeunte, paired = T, exact = F, alternative = "less")
+```
+
+
+### Pós Pandemia (Segundo ano de Pandemia - 01/12/2021)
+
+A hipótese nula aqui é: A distribuição de roubos a transeunte por batalhão segue distribuição normal no mês selecionado para representar o pós pandemia.
+
+A hipótese alternativa: A distribuição de roubos a transeunte por batalhão não segue distribuição normal no mês selecionado para representar o pós pandemia.
+
+```{r shapiro wilk pos pandemia (segundo ano), echo = FALSE}
+
+pos.pandemia <- crimes.aisp %>% dplyr::filter(mes.ano %in% as.IDate("01-12-2021",format = "%d-%m-%Y")) %>% dplyr::select(roubo_transeunte)
+shapiro.test(pos.pandemia$roubo_transeunte)
+```
+
+### Teste de Wilcoxon para checar o pareamento - (Pré vs. Segundo ano de Pandemia - 01/12/2021)
+
+Realizado o teste de Wilcoxon para checar o pareamento entre as distribuições de roubo a transeunte do pré e do pós pandemia.
+
+A hipótese nula aqui é: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós é igual a zero.
+
+A hipótese alternativa: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós não é igual a zero.
+
+```{r wilcox pos pandemia (segundo ano), echo = FALSE}
+wilcox.test(pre.pandemia$roubo_transeunte, pos.pandemia$roubo_transeunte, paired = T, exact = F)
+```
+
+### Teste de Wilcoxon para checar o pareamento (Maior que) - (Pré vs. Segundo ano de Pandemia - 01/12/2021)
+
+A hipótese nula aqui é: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós é igual a zero.
+
+A hipótese alternativa: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós é maior do que zero.
+
+```{r wilcox pos pandemia maior que (segundo ano), echo = FALSE}
+wilcox.test(pre.pandemia$roubo_transeunte, pos.pandemia$roubo_transeunte, paired = T, exact = F, alternative = "greater")
+```
+
+### Teste de Wilcoxon para checar o pareamento (Menor que) - (Pré vs. Segundo ano de Pandemia - 01/12/2021)
+
+A hipótese nula aqui é: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós é igual a zero.
+
+A hipótese alternativa: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós é menor do que zero.
+
+```{r wilcox pos pandemia menor que (segundo ano), echo = FALSE}
+wilcox.test(pre.pandemia$roubo_transeunte, pos.pandemia$roubo_transeunte, paired = T, exact = F, alternative = "less")
+```
+
+### Pós Pandemia (Terceiro ano de Pandemia - 01/12/2022)
+
+A hipótese nula aqui é: A distribuição de roubos a transeunte por batalhão segue distribuição normal no mês selecionado para representar o pós pandemia.
+
+A hipótese alternativa: A distribuição de roubos a transeunte por batalhão não segue distribuição normal no mês selecionado para representar o pós pandemia.
+
+```{r shapiro wilk pos pandemia (terceiro ano), echo = FALSE}
+
+pos.pandemia <- crimes.aisp %>% dplyr::filter(mes.ano %in% as.IDate("01-12-2022",format = "%d-%m-%Y")) %>% dplyr::select(roubo_transeunte)
+shapiro.test(pos.pandemia$roubo_transeunte)
+```
+
+### Teste de Wilcoxon para checar o pareamento (Pré vs. Terceiro ano de Pandemia - 01/12/2022)
+
+Realizado o teste de Wilcoxon para checar o pareamento entre as distribuições de roubo a transeunte do pré e do pós pandemia.
+
+A hipótese nula aqui é: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós é igual a zero.
+
+A hipótese alternativa: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós não é igual a zero.
+
+```{r wilcox pos pandemia (terceiro ano), echo = FALSE}
+wilcox.test(pre.pandemia$roubo_transeunte, pos.pandemia$roubo_transeunte, paired = T, exact = F)
+```
+
+### Teste de Wilcoxon para checar o pareamento (Maior que) - (Pré vs. Terceiro ano de Pandemia - 01/12/2022)
+
+A hipótese nula aqui é: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós é igual a zero.
+
+A hipótese alternativa: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós é maior do que zero.
+
+```{r wilcox pos pandemia maior que (terceiro ano), echo = TRUE}
+wilcox.test(pre.pandemia$roubo_transeunte, pos.pandemia$roubo_transeunte, paired = T, exact = F, alternative = "greater")
+```
+
+### Teste de Wilcoxon para checar o pareamento (Menor que) - (Pré vs. Terceiro ano de Pandemia - 01/12/2022)
+
+A hipótese nula aqui é: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós é igual a zero.
+
+A hipótese alternativa: A mediana das diferenças (pré - pós) entre as distribuições de roubos a transeunte pré e pós é menor do que zero.
+
+```{r wilcox pos pandemia menor que (terceiro ano), echo = TRUE}
+wilcox.test(pre.pandemia$roubo_transeunte, pos.pandemia$roubo_transeunte, paired = T, exact = F, alternative = "less")
+```
+
+
+# (Extra) Realizando um teste de hipótese básico para reforçar o conceito
+
+* Um gerente da indústria de telefonia acha que a conta mensal de telefone celular dos clientes em média acima de R$ 52 por mês. 
+
+* A empresa deseja testar esta afirmação. (Suponha que o nível de significância é de 10%)
+        
+	𝐻_0: 𝜃= 52 
+	𝐻_1: 𝜃> 52
+	
+## Gerando amostras artificiais extraídas de uma Normal
+
+Na vida real coletaríamos amostras para testar essa hipótese. Aqui ilustramos dois casos, dentre os quais o primeiro supõe que coletamos uma amostra com média acima de 52, enquanto o segundo faz a suposição de que a amostra coletada tem média inferior a 52
+
+### Primeira amostra (Com média acima de 52)
+```{r criando amostra cel acima, echo = TRUE}
+
+cel.acima <- rnorm(5000, mean = 55, sd = 1)
+```
+
+### Segunda amostra (Com média abaixo de 52)
+
+```{r criando amostra cel abaixo, echo = TRUE}
+
+cel.abaixo <- rnorm(5000, mean = 45, sd = 1)
+```
+
+### Teste para a primeira amostra (Com média acima de 52)
+
+```{r teste cel acima, echo = TRUE}
+
+t.test(cel.acima, mu = 52, alternative = 'greater', conf.level = 0.9)
+
+```
+
+### Teste para a segunda amostra (Com média abaixo de 52)
+
+```{r test cel abaixo, echo = TRUE}
+
+t.test(cel.abaixo, mu = 52, alternative = 'greater', conf.level = 0.9)
+```
+
