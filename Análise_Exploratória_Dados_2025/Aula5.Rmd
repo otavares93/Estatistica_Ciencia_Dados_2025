@@ -1,0 +1,179 @@
+---
+title: "Análise de dados salariais - Regressão Linear"
+author: "Otto Tavares"
+date: "2025-03-25"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Introdução
+
+```{r importando bibliotecas, echo = TRUE}
+library(tidyverse)
+library(tidyr)
+library(purrr)
+library(dlookr)
+library(summarytools)
+library(readxl)
+library(knitr)
+library(data.table)
+library(ggpubr)
+library(corrplot)
+library(rcompanion)
+library(stargazer)
+library(mice)
+library(plm)
+```
+
+```{r função útil para exposição da regressão com imputação de dados, echo = FALSE}
+
+round.summary <- function(FIT.MI, conf.int=T, digits=4, DATA.FRAME=T, ...) {
+  # The round.summary() function is provided with no express or implied warranty.
+  
+  # Function to allow rounding of summary(pool(FIT.MI))
+  require(tidyverse)
+  # Convert to a data.frame
+  DF <- as.data.frame(summary(pool(FIT.MI), conf.int=conf.int, ...))
+  # Move term from column to rownames
+  rownames(DF) <- DF$term
+  DF <- DF %>% 
+    select(-term)
+  # Convert to matrix, round
+  DF <- round(as.matrix(DF), digits)
+  # Convert back to a data.frame (if DATA.FRAME=T)
+  if (DATA.FRAME) DF <- as.data.frame(DF)
+  return(DF)
+}
+
+
+```
+
+
+# Importando os dados de salário
+
+```{r importando dados, echo = FALSE}
+salarios <- readxl::read_excel("/Users/ottotavares/Library/Mobile Documents/com~apple~CloudDocs/Documents/infnet/Estatistica_Ciencia_Dados_2025/dados_auxiliares/dados_bussab_m.xlsx")
+```
+
+
+##Analisando a matriz de correlação da sub-amostra dos indivíduos que preencheram a variável de filhos
+
+Vamos filtrar apenas os indivíduos de um determinado setor de uma empresa que tenham preenchido os dados de filhos no banco de dados.
+Aqui é importante destacar, que ao fazer esse filtro, muda-se o espaço amostral, esses valores não devem ser comparados com as tabelas anteriores.
+
+```{r Correlacao de variaveis , echo = TRUE}
+kable(cor(salarios %>% dplyr::filter(!is.na(n_filhos)) %>% dplyr::select(salario, n_filhos, idade_anos)))
+```
+
+É fácil ver que quanto maior a idade dos funcionários maior a quantidade de filhos. Relação não tão direta quando o assunto são as comparações entre salário e idade, ou salário e número de filhos. 
+
+Podemos a partir daí, contruir um scatterplot entre as variáveis idade e quantidade de filhos a fim de ver a relação positiva de crescimento propocional entre as variáveis, como segue:
+
+```{r analisando scatter entre variaveis mais correlacionadas , echo = TRUE, results='asis'}
+salarios %>% dplyr::filter(!is.na(n_filhos)) %>% dplyr::select(idade_anos, n_filhos) %>% ggplot(aes(x=n_filhos, y =idade_anos)) + geom_point() + geom_smooth(method = "lm", se = FALSE) + theme_classic()
+```
+
+### Rodando a regressao linear sem a variável n_filhos
+
+```{r regressao linear com uma variavel , echo = TRUE, warning=FALSE, results='asis'}
+#Simples, variavel explicativa idade
+modelo.1 <- lm(salario ~ idade_anos, data = salarios)
+stargazer(modelo.1, type = 'html')
+```
+
+### Multivariada, com a variável estado civil de controle
+
+```{r Multivariada, com a variável estado civil de controle , echo = TRUE , warning=FALSE, results='asis'}
+modelo.2 <- lm(salario ~ idade_anos + factor(estado_civil), data = salarios)
+stargazer(modelo.2, type = 'html')
+```
+
+
+### Multivariada, com as variáveis estado civil, grau de instrucao de controle
+
+```{r Multivariada, com as variáveis estado civil, grau de instrucao de controle , echo = TRUE, warning=FALSE, results='asis'}
+modelo.3 <- lm(salario ~ idade_anos + factor(estado_civil) + factor(Grau_de_instrucao), data = salarios)
+
+stargazer(modelo.3, type = 'html')
+```
+
+### Multivariada, com as variáveis estado civil, grau de instrucao e regiao de controle
+
+```{r exemplo stargazer , echo = TRUE, warning=FALSE, results='asis'}
+modelo.linear <- lm(salario ~ idade_anos + factor(estado_civil) + factor(Grau_de_instrucao) + factor(regiao), data = salarios)
+
+stargazer(modelo.linear, type = "html")
+
+```
+
+## Analise dos Residuos
+### Modelo com todas as variáveis com excecao de n_filhos
+
+```{r residuos analise , echo = TRUE}
+res <- lm(salario ~ idade_anos + factor(estado_civil) + factor(Grau_de_instrucao)  + factor(regiao), data = salarios)$residuals
+
+
+### Modelo com todas as variáveis com excecao de n_filhos e regiao
+res.escolhido <- lm(salario ~ idade_anos + factor(estado_civil) + factor(Grau_de_instrucao)  , data = salarios)$residuals
+
+ggplot(data.frame(residuos = c(res, res.escolhido), modelo = c(rep('Modelo com todas variáveis', times = length(res)), rep('Modelo escolhido', times = length(res.escolhido)))), aes(x = residuos, group = modelo)) + geom_density() + theme_bw()
+
+```
+
+
+## Imputando dados com mice
+### Imputando os dados com o pacote mice sem fazer nenhum pós processamento
+
+```{r imputando dados , echo = TRUE}
+imp <- mice(salarios %>% dplyr::mutate(estado_civil = as.factor(estado_civil), Grau_de_instrucao = as.factor(Grau_de_instrucao), regiao = as.factor(regiao)),method = "midastouch",print = FALSE, m = 5, max.iter = 5 , seed = 512) 
+#fit <- with(data = imp, exp = lm(salario ~idade_anos + factor(n_filhos) +factor(estado_civil) + factor(Grau_de_instrucao) + factor(regiao))) 
+
+fit <- with(data = imp, exp = lm(salario ~idade_anos + n_filhos + factor(estado_civil) + factor(Grau_de_instrucao))) 
+
+round.summary(fit, digits = 4)
+
+#est <- pool(fit)
+#est %>% tidy() %>% kable()
+
+
+#fit.glm <- with(data = imp, exp = multinom(factor(n_filhos) ~ salario + idade_anos +factor(estado_civil) + factor(Grau_de_instrucao) + factor(regiao))) 
+#round.summary(fit.glm, digits = 4)
+
+```
+
+
+# Importando os dados de crimes para analisar regressão em painel
+
+```{r importando dados de crime e regressao em painel, echo = FALSE}
+crimes <- readr::read_csv2("/Users/ottotavares/Library/Mobile Documents/com~apple~CloudDocs/Documents/infnet/Estatistica_Ciencia_Dados_2025/dados_auxiliares/BaseDPEvolucaoMensalCisp.csv",locale = readr::locale(encoding = "latin1"))
+
+crimes.aisp <- crimes %>% dplyr::select(CISP, mes, ano,  AISP,  RISP, roubo_transeunte, roubo_celular, posse_drogas) %>% dplyr::mutate(mes.ano = as.IDate(paste("01", mes, ano, sep = "-"), format = "%d-%m-%Y")) %>% dplyr::filter(mes.ano %in% c(as.IDate("01-12-2019",format = "%d-%m-%Y"), as.IDate("01-12-2020",format = "%d-%m-%Y"), as.IDate("01-12-2021",format = "%d-%m-%Y") ,as.IDate("01-12-2022",format = "%d-%m-%Y"))) %>% dplyr::group_by(AISP, mes.ano) %>% dplyr::summarise(roubo_transeunte = sum(roubo_transeunte), roubo_celular = sum(roubo_celular), posse_drogas = sum(posse_drogas))
+
+crimes.aisp <- crimes.aisp %>% dplyr::left_join(crimes %>% dplyr::select(AISP, Regiao, mes, ano) %>% 
+dplyr::mutate(mes.ano = as.IDate(paste("01", mes, ano, sep = "-"), format = "%d-%m-%Y")) %>% dplyr::filter(mes.ano %in% c(as.IDate("01-12-2019",format = "%d-%m-%Y"), as.IDate("01-12-2020",format = "%d-%m-%Y"), as.IDate("01-12-2021",format = "%d-%m-%Y") ,as.IDate("01-12-2022",format = "%d-%m-%Y"))) %>% dplyr::distinct(AISP, mes.ano, Regiao), by = c("AISP" = "AISP", "mes.ano"="mes.ano"))
+
+crimes.aisp <- crimes.aisp %>% dplyr::mutate(periodo = case_when(
+                             mes.ano %in% as.IDate("2019-12-01") ~ '0',
+                             mes.ano %in% as.IDate("2020-12-01") ~ '1',
+                             mes.ano %in% as.IDate("2021-12-01") ~ '2',
+                             mes.ano %in% as.IDate("2022-12-01") ~ '3'))
+
+
+summary(plm(formula = roubo_transeunte ~ factor(periodo), data = crimes.aisp, effect = "individual", model = "within", index = c("AISP", "mes.ano")))
+
+crimes.aisp %>% dplyr::group_by(mes.ano) %>% dplyr::summarize(roubo_transeunte_mean = median(roubo_transeunte))
+```
+
+# Importando dados de países e analisando regressão em painel (pib e variáveis socioeconomicas)
+
+```{r painel pib, echo = FALSE}
+income <- readxl::read_excel("/Users/ottotavares/Library/Mobile Documents/com~apple~CloudDocs/Documents/infnet/Estatistica_Ciencia_Dados_2025/dados_auxiliares/income.xlsx")
+names(income)[c(1:2, 4:length(names(income)))] <- c("pais", "ano", "Log.pib.real", "Log.populacao", "fracao.pop.0_14", "fracao.pop.15_19", "fracao.pop.30_44", "fracao.pop.45_59","fracao.pop.60_mais", "educ.adultos", "idade.mediana", "pais.idx")
+summary(plm(Log.pib.real ~ educ.adultos + idade.mediana + Log.populacao, data=income, index=c("pais", "ano"), model="within", effect = "individual"))
+#summary(plm(Log.pib.real ~ educ.adultos + idade.mediana + Log.populacao, data=income, index=c("pais", "ano"), model="within", effect = "twoway"))
+```
+
