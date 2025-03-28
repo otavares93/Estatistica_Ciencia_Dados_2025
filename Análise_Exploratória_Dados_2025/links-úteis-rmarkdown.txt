@@ -1,0 +1,25 @@
+Temas e cores do Beamer (Slides em pdf gerados pelo latex a partir do R)
+
+https://deic.uab.cat/~iblanes/beamer_gallery/index_by_theme.html
+
+https://deic.uab.cat/~iblanes/beamer_gallery/index_by_color.html
+
+Editando e customizando tabelas com o KableExtra
+
+https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
+
+Calculadora de cores em RGB para customização de slides e dashboards
+
+https://www.rapidtables.com/web/color/RGB_Color.html
+
+Fleshdashboard. Uma forma simples de gerar um dashboard a partir do arquivo RMarkdown. Definição, conceitos básicos e exemplos.
+
+https://posit.co/blog/flexdashboard-easy-interactive-dashboards-for-r/
+
+https://pkgs.rstudio.com/flexdashboard/articles/layouts.html
+
+https://pkgs.rstudio.com/flexdashboard/articles/examples.html
+
+
+
+

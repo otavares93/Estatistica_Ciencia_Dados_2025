@@ -1,0 +1,99 @@
+---
+title: "Análise de salários"
+output:
+  flexdashboard::flex_dashboard:
+    theme:
+      bg: "#F30C33"
+      fg: "#101010" 
+      primary: "#101010"
+      base_font:
+        google: Prompt
+      code_font:
+        google: JetBrains Mono
+    orientation: columns
+    vertical_layout: scroll
+    
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(summarytools)
+library(knitr)
+library(rmarkdown)
+library(kableExtra)
+library(ggplot2)
+library(stargazer)
+library(shiny)
+library(mice)
+# Install thematic and un-comment for themed static plots (i.e., ggplot2)
+# thematic::thematic_rmd()
+```
+
+```{r carregando os dados, include=FALSE}
+salarios <- readxl::read_excel("/Users/ottotavares/Library/Mobile Documents/com~apple~CloudDocs/Documents/infnet/Estatistica_Ciencia_Dados_2025/dados_auxiliares/dados_bussab_m.xlsx")
+```
+
+Column {data-width=650 .tabset}
+-----------------------------------------------------------------------
+
+### Estatísticas descritivas da variável objetivo
+
+```{r}
+salarios %>% dplyr::select(salario) %>% summarytools::descr() %>% kbl(caption = "Estatísticas Descritivas da variável objetivo") %>%
+  kable_classic(full_width = F, html_font = "Cambria")
+
+```
+
+### Estatísticas descritivas das variáveis explicativas quantitativas
+
+```{r}
+
+salarios %>% dplyr::select(idade_anos , n_filhos) %>% summarytools::descr() %>% kbl(caption = "Estatísticas Descritivas das variáveis quantitativas") %>%
+  kable_classic(full_width = F, html_font = "Cambria")
+
+```
+
+
+### Estatísticas descritivas das variáveis explicativas categóricas
+
+```{r}
+
+
+salarios %>% dplyr::select(estado_civil) %>% summarytools::freq() %>% kbl(caption = "Estatísticas Descritivas das variáveis categóricas") %>%
+  kable_classic(full_width = F, html_font = "Cambria")
+
+salarios %>% dplyr::select(Grau_de_instrucao) %>% summarytools::freq() %>% kbl(caption = "Estatísticas Descritivas das variáveis categóricas") %>%
+  kable_classic(full_width = F, html_font = "Cambria")
+
+
+
+```
+
+
+### Rodando um modelo de regressão linear com as variáveis de salário
+
+```{r, results='asis'}
+
+
+reg1 <- lm(salario ~ idade_anos + factor(estado_civil) + factor(Grau_de_instrucao), data = salarios)
+stargazer(reg1, type = "html")
+
+
+
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Histograma de dados para variável n_filhos
+
+```{r, results='asis'}
+
+
+salarios %>% dplyr::select(n_filhos) %>% ggplot(aes(x=n_filhos, y = after_stat(density))) + geom_density(linetype = 2) + xlab('numero de filhos') + ylab('Densidade de Frequência') + theme_classic()
+
+
+
+```
+

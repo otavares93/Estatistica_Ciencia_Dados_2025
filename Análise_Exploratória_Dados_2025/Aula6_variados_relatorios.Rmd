@@ -1,0 +1,220 @@
+---
+title: "Análise descritiva e estatística de uma base de dados de salários"
+author: "Otto Tavares"
+date: "`r format(Sys.time(), '%d %b, %Y')`"
+header-includes:
+-   \usepackage{booktabs}
+output: ioslides_presentation
+theme: "Madrid"
+colortheme: "beaver"
+#fonttheme: "structurebold"
+#incremental: false
+#keep_md: yes
+latex_engine: lualatex
+fig_width: 6.5
+fig_height: 4
+#df_print: kable
+#includes:
+#  header_beamer.tex
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 6, fig.asp = 0.618, out.width = "70%", fig.align = "center", fig.path = 'Figs/',message = FALSE, warning = FALSE)
+```
+
+
+## Introdução - Bibliotecas (parte 1)
+
+Carregando bibliotecas que foram fundamentais para a construção dos modelos de regressão, tanto na versão com *input* de dados faltantes, como nos modelos usuais.
+
+```{r importando bibliotecas 1, echo = TRUE}
+library(tidyverse)
+library(tidyr)
+library(purrr)
+library(dlookr)
+library(summarytools)
+library(readxl)
+library(knitr)
+library(data.table)
+library(ggpubr)
+library(corrplot)
+```
+
+## Introdução - Bibliotecas (parte 2)
+
+```{r importando bibliotecas 2, echo = TRUE}
+library(rcompanion)
+library(stargazer)
+library(mice)
+library(rmarkdown)
+library(tinytex)
+library(sandwich)
+library(magrittr)
+library(shiny)
+library(plm)
+```
+
+# Base de dados
+
+## Base de dados de trabalho
+
+- Base de dados do curso está disponibilizada no github no diretório 'dados_auxiliares'.
+
+- As bases disponíveis até aqui são:
+
+    1. As de população mundial extraída do wikipedia;
+    2. Lista dos países por continente no mundo;
+    3. Salários extraídas do Livro do Bussab e Moretim;
+    4. Crimes extraída do Instituto de Segurança Pública;
+    5. Income, disponbilizada pelos autores Acemoglu e Robinson.
+
+- Vamos importar a base de salários para exposição das estatísticas descritivas em relatório em slides.
+
+```{r importando dados, echo = FALSE, include = FALSE}
+salarios <- readxl::read_excel("/Users/ottotavares/Library/Mobile Documents/com~apple~CloudDocs/Documents/infnet/Estatistica_Ciencia_Dados_2025/dados_auxiliares/dados_bussab_m.xlsx")
+```
+
+## Imprindo as duas primeiras linhas da base de salário
+
+- Apresentando as primeiras linhas do banco de dados de Salários para termos ciência dos dados.
+
+```{r imprimindo as variaveis, echo = FALSE}
+kable(head(salarios), format = "latex", booktabs = T) %>%
+  kableExtra::kable_styling(font_size = 7) 
+```
+
+## Identificando os tipos de cada variável na base
+
+- A função diagnose que utilizamos para identificar tipos de variável, sua unicidade e proporção de *missing*.
+
+```{r identificando os tipos de variáveis, echo = TRUE, warning=FALSE, results='asis'}
+salarios %>% dlookr::diagnose()  %>% 
+  kable(., , format = "latex", booktabs = T) %>%
+  kableExtra::kable_styling(font_size = 7)
+```
+
+## Análise de frequências da variável com dados faltantes **n_filhos**
+
+- Utilizamos a função freq() do pacote summarytools para calcular as frequências relativas
+
+```{r frequencias de uma variavel, echo = FALSE, warning=FALSE, results='asis', error=FALSE}
+salarios %>% dplyr::select(n_filhos) %>% 
+  summarytools::freq(style = "rmarkdown", headings = FALSE, plain.ascii = FALSE) %>% 
+  kable(., , format = "latex", booktabs = T) %>%
+  kableExtra::kable_styling(font_size = 7)
+```
+
+## Análise descritiva e de histogramas de uma variável contínua
+
+- Variável salários é analisada descritivamente. 
+
+- A centralidade dos dados, a dipersão, a assimetria, bem como as estatísticas de ordem são calculadas, a fim de ter uma leitura acerca da distribuição dessa variável.
+
+```{r desc variavel salario , echo = FALSE, warning = FALSE, results='asis', include = TRUE, error=FALSE}
+salarios %>% dplyr::select(salario) %>% summarytools::descr() %>% 
+  kable(., , format = "latex", booktabs = T) %>%
+  kableExtra::kable_styling(font_size = 5)
+```
+
+## Função de Sturge para cálculo do número de bins
+
+```{r definindo as funcoes geradoras de binwidths FD e S , echo = TRUE}
+
+sr <- function(x) {
+  n <-length(x)
+  return((3.49*sd(x))/n^(1/3))
+}
+
+```
+
+
+## Análise visual da variável salário
+
+- Calculando o histograma da variável salários com o número de *bins* calculado a partir da função de Sturge.
+
+```{r analisando salario visualmente , echo = FALSE, results='asis'}
+salarios %>% dplyr::select(salario) %>% ggplot(aes(x=salario))+geom_histogram(aes(y = after_stat(density)) ,binwidth = sr, fill = 'lightblue') + xlab('Salário') + ylab('Densidade de Frequência') + geom_vline(xintercept=c(median(salarios$salario), mean(salarios$salario))) + annotate("text", x=median(salarios$salario) + 0.3, y=0.05, label="Mediana", angle=90) + annotate("text", x=mean(salarios$salario) + 0.3, y=0.05, label="Média", angle=90) + theme_classic()
+```
+
+## Análise visual da variável salário - leitura
+
+1. Leve assimetria com cauda à direita
+2. Centralidade dos dados calculada pela média sofre leve contaminação dos valores mais distantes do centro da distribuição
+3. Por mais que sejam poucas observações os dados não apresentam dispersão elevada, tendo a maioria dos dados concentrada próxima ao centro da distribuição.
+
+## Rodando a regressao linear sem a variável n_filhos
+
+```{r regressao linear com uma variavel , echo = FALSE, warning = FALSE, results='asis'}
+#Simples, variavel explicativa idade
+modelo.1 <- lm(salario ~ idade_anos, data = salarios)
+stargazer(modelo.1, 
+          type = 'html', font.size= 'tiny', column.sep.width = "1pt", line.sep.width = "1pt", header=FALSE, 
+          title="Resultados das Regressões", single.row = TRUE,
+          column.labels = c("Modelo 1"),
+          colnames = FALSE,
+          model.numbers = FALSE,
+          dep.var.caption = "",
+          dep.var.labels = "Salário",
+          covariate.labels = c("Idade (anos)"),
+          keep.stat = c("rsq", "f"),
+          notes.align = "l"
+          )
+```
+
+## Multivariada, com a variável estado civil de controle
+
+```{r Multivariada, com a variável estado civil de controle, echo = FALSE , warning = FALSE, results='asis'}
+modelo.2 <- lm(salario ~ idade_anos + factor(estado_civil), data = salarios)
+stargazer(modelo.1, modelo.2, 
+          type = 'latex', font.size= 'tiny', column.sep.width = "1pt", line.sep.width = "1pt", header=FALSE, 
+          title="Resultados das Regressões", single.row = TRUE,
+          column.labels = c("Modelo 1", "Modelo 2"),
+          colnames = FALSE,
+          model.numbers = FALSE,
+          dep.var.caption = "",
+          dep.var.labels = "Salário",
+          covariate.labels = c("Idade (anos)", "Estado Civil"),
+          #keep.stat = c("rsq", "f"),
+          notes.align = "l"
+          )
+```
+
+
+## Multivariada, com as variáveis estado civil, grau de instrucao de controle
+
+```{r Multivariada, com as variáveis estado civil, grau de instrucao de controle , echo = FALSE, warning=FALSE, results='asis'}
+modelo.3 <- lm(salario ~ idade_anos + factor(estado_civil) + factor(Grau_de_instrucao), data = salarios)
+stargazer(modelo.1, modelo.2, modelo.3, 
+          type = 'latex', font.size= 'tiny', column.sep.width = "1pt", line.sep.width = "1pt", header=FALSE, 
+          title="Resultados das Regressões", single.row = TRUE,
+          column.labels = c("Modelo 1", "Modelo 2", "Modelo 3"),
+          colnames = FALSE,
+          model.numbers = FALSE,
+          dep.var.caption = "",
+          dep.var.labels = "Salário",
+          covariate.labels = c("Idade (anos)", "Estado Civil (Solteiro)", "Grau de Instrução (Médio)",  "Grau de Instrução (Superior)"),
+          #keep.stat = c("rsq", "f"),
+          notes.align = "l"
+          )
+```
+
+## Multivariada, com as variáveis estado civil, grau de instrucao e regiao de controle
+
+```{r Multivariada, com as variáveis estado civil, grau de instrucao e regiao de controle , echo = FALSE, warning=FALSE, results='asis'}
+modelo.4 <- lm(salario ~ idade_anos + factor(estado_civil) + factor(Grau_de_instrucao) + factor(regiao), data = salarios) 
+stargazer(modelo.1, modelo.2, modelo.3, modelo.4, 
+          type = 'latex', font.size= 'tiny', column.sep.width = "1pt", line.sep.width = "1pt", header=FALSE, 
+          title="Resultados das Regressões", single.row = TRUE,
+          column.labels = c("Modelo 1", "Modelo 2", "Modelo 3", "Modelo 4"),
+          colnames = FALSE,
+          model.numbers = FALSE,
+          dep.var.caption = "",
+          dep.var.labels = "Salário",
+          covariate.labels = c("Idade (anos)", "Estado Civil", "Grau de Instrução", "Região"),
+          #keep.stat = c("rsq", "f"),
+          notes.align = "l"
+          )
+```
+
+
