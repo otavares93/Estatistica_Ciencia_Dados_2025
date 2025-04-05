@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.27)  27 MAR 2025 21:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.27)  1 APR 2025 19:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -605,43 +605,43 @@ Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
 \fb@frh=\dimen300
 \FrameRule=\dimen301
 \FrameSep=\dimen302
-) (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/booktabs/booktabs.sty
-Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
-\heavyrulewidth=\dimen303
-\lightrulewidth=\dimen304
-\cmidrulewidth=\dimen305
-\belowrulesep=\dimen306
-\belowbottomsep=\dimen307
-\aboverulesep=\dimen308
-\abovetopsep=\dimen309
-\cmidrulesep=\dimen310
-\cmidrulekern=\dimen311
-\defaultaddspace=\dimen312
-\@cmidla=\count357
-\@cmidlb=\count358
-\@aboverulesep=\dimen313
-\@belowrulesep=\dimen314
-\@thisruleclass=\count359
-\@lastruleclass=\count360
-\@thisrulewidth=\dimen315
 ) (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/tools/longtable.sty
 Package: longtable 2024-10-27 v4.22 Multi-page Table package (DPC)
 \LTleft=\skip70
 \LTright=\skip71
 \LTpre=\skip72
 \LTpost=\skip73
-\LTchunksize=\count361
-\LTcapwidth=\dimen316
+\LTchunksize=\count357
+\LTcapwidth=\dimen303
 \LT@head=\box79
 \LT@firsthead=\box80
 \LT@foot=\box81
 \LT@lastfoot=\box82
 \LT@gbox=\box83
-\LT@cols=\count362
-\LT@rows=\count363
-\c@LT@tables=\count364
-\c@LT@chunks=\count365
+\LT@cols=\count358
+\LT@rows=\count359
+\c@LT@tables=\count360
+\c@LT@chunks=\count361
 \LT@p@ftn=\toks48
+) (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/booktabs/booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen304
+\lightrulewidth=\dimen305
+\cmidrulewidth=\dimen306
+\belowrulesep=\dimen307
+\belowbottomsep=\dimen308
+\aboverulesep=\dimen309
+\abovetopsep=\dimen310
+\cmidrulesep=\dimen311
+\cmidrulekern=\dimen312
+\defaultaddspace=\dimen313
+\@cmidla=\count362
+\@cmidlb=\count363
+\@aboverulesep=\dimen314
+\@belowrulesep=\dimen315
+\@thisruleclass=\count364
+\@lastruleclass=\count365
+\@thisrulewidth=\dimen316
 ) (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/tools/array.sty
 Package: array 2024/10/17 v2.6g Tabular extension package (FMi)
 \col@sep=\dimen317
@@ -651,22 +651,46 @@ Package: array 2024/10/17 v2.6g Tabular extension package (FMi)
 \extratabsurround=\skip74
 \backup@length=\skip75
 \ar@cellbox=\box85
-) (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/multirow/multirow.sty
+) (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2023/08/05 v3.6o Customizing captions (AR)
+(/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
+\caption@tempdima=\dimen319
+\captionmargin=\dimen320
+\caption@leftmargin=\dimen321
+\caption@rightmargin=\dimen322
+\caption@width=\dimen323
+\caption@indent=\dimen324
+\caption@parindent=\dimen325
+\caption@hangindent=\dimen326
+Package caption Info: beamer document class detected.
+(/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/caption/caption-beamer.sto
+File: caption-beamer.sto 2022/01/06 v2.0c Adaption of the caption package to the beamer document classes (AR)
+))
+\c@caption@flags=\count366
+\c@continuedfloat=\count367
+Package caption Info: hyperref package is loaded.
+Package caption Info: Hyperref support is turned off
+(caption)             because hyperref has stopped early.
+Package caption Info: longtable package is loaded.
+(/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/caption/ltcaption.sty
+Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
+)) (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/multirow/multirow.sty
 Package: multirow 2024/11/12 v2.9 Span multiple rows of a table
 \multirow@colwidth=\skip76
-\multirow@cntb=\count366
+\multirow@cntb=\count368
 \multirow@dima=\skip77
-\bigstrutjot=\dimen319
+\bigstrutjot=\dimen327
 ) (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/wrapfig/wrapfig.sty
-\wrapoverhang=\dimen320
-\WF@size=\dimen321
-\c@WF@wrappedlines=\count367
+\wrapoverhang=\dimen328
+\WF@size=\dimen329
+\c@WF@wrappedlines=\count369
 \WF@box=\box86
 \WF@everypar=\toks50
 Package: wrapfig 2003/01/31  v 3.6
 ) (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count368
+\c@float@type=\count370
 \float@exts=\toks51
 \float@box=\box87
 \@float@everytoks=\toks52
@@ -675,7 +699,7 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 Package: colortbl 2024/07/06 v1.0i Color table columns (DPC)
 \everycr=\toks53
 \minrowclearance=\skip78
-\rownum=\count369
+\rownum=\count371
 ) (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/pdflscape/pdflscape.sty
 Package: pdflscape 2022-10-27 v0.13 Display of landscape pages in PDF
 (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/pdflscape/pdflscape-nometadata.sty
@@ -689,25 +713,25 @@ Package: tabu 2019/01/11 v2.9 - flexible LaTeX tabulars (FC+tabu-fixed)
 (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/varwidth/varwidth.sty
 Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
 \@vwid@box=\box89
-\sift@deathcycles=\count370
-\@vwid@loff=\dimen322
-\@vwid@roff=\dimen323
+\sift@deathcycles=\count372
+\@vwid@loff=\dimen330
+\@vwid@roff=\dimen331
 )
-\c@taburow=\count371
-\tabu@nbcols=\count372
-\tabu@cnt=\count373
-\tabu@Xcol=\count374
-\tabu@alloc=\count375
-\tabu@nested=\count376
-\tabu@target=\dimen324
-\tabu@spreadtarget=\dimen325
-\tabu@naturalX=\dimen326
-\tabucolX=\dimen327
-\tabu@Xsum=\dimen328
-\extrarowdepth=\dimen329
-\abovetabulinesep=\dimen330
-\belowtabulinesep=\dimen331
-\tabustrutrule=\dimen332
+\c@taburow=\count373
+\tabu@nbcols=\count374
+\tabu@cnt=\count375
+\tabu@Xcol=\count376
+\tabu@alloc=\count377
+\tabu@nested=\count378
+\tabu@target=\dimen332
+\tabu@spreadtarget=\dimen333
+\tabu@naturalX=\dimen334
+\tabucolX=\dimen335
+\tabu@Xsum=\dimen336
+\extrarowdepth=\dimen337
+\abovetabulinesep=\dimen338
+\belowtabulinesep=\dimen339
+\tabustrutrule=\dimen340
 \tabu@thebody=\toks54
 \tabu@footnotes=\toks55
 \tabu@box=\box90
@@ -731,37 +755,31 @@ Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
 \UL@hyphenbox=\box96
 \UL@skip=\skip81
 \UL@hook=\toks56
-\UL@height=\dimen333
-\UL@pe=\count377
-\UL@pixel=\dimen334
+\UL@height=\dimen341
+\UL@pe=\count379
+\UL@pixel=\dimen342
 \ULC@box=\box97
 Package: ulem 2019/11/18
-\ULdepth=\dimen335
+\ULdepth=\dimen343
 ) (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/makecell/makecell.sty
 Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
-\rotheadsize=\dimen336
-\c@nlinenum=\count378
+\rotheadsize=\dimen344
+\c@nlinenum=\count380
 \TeXr@lab=\toks57
 ) (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/bookmark/bookmark.sty
 Package: bookmark 2023-12-10 v1.31 PDF bookmarks (HO)
 (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/bookmark/bkm-pdftex.def
 File: bkm-pdftex.def 2023-12-10 v1.31 bookmark driver for pdfTeX and luaTeX (HO)
-\BKM@id=\count379
+\BKM@id=\count381
 ))
-LaTeX Font Info:    Trying to load font information for T1+lmss on input line 154.
+LaTeX Font Info:    Trying to load font information for T1+lmss on input line 161.
 (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/lm/t1lmss.fd
 File: t1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count380
+\l__color_backend_stack_int=\count382
 \l__pdf_internal_box=\box98
 ) (./Aula6_variados_relatorios.aux
-
-LaTeX Warning: Label `' multiply defined.
-
-
-LaTeX Warning: Label `' multiply defined.
-
 
 LaTeX Warning: Label `' multiply defined.
 
@@ -780,24 +798,24 @@ LaTeX Warning: Label `' multiply defined.
 )
 \openout1 = `Aula6_variados_relatorios.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 154.
-LaTeX Font Info:    ... okay on input line 154.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 154.
-LaTeX Font Info:    ... okay on input line 154.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 154.
-LaTeX Font Info:    ... okay on input line 154.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 154.
-LaTeX Font Info:    ... okay on input line 154.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 154.
-LaTeX Font Info:    ... okay on input line 154.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 154.
-LaTeX Font Info:    ... okay on input line 154.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 154.
-LaTeX Font Info:    ... okay on input line 154.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 154.
-LaTeX Font Info:    ... okay on input line 154.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 154.
-LaTeX Font Info:    ... okay on input line 154.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 161.
+LaTeX Font Info:    ... okay on input line 161.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 161.
+LaTeX Font Info:    ... okay on input line 161.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 161.
+LaTeX Font Info:    ... okay on input line 161.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 161.
+LaTeX Font Info:    ... okay on input line 161.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 161.
+LaTeX Font Info:    ... okay on input line 161.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 161.
+LaTeX Font Info:    ... okay on input line 161.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 161.
+LaTeX Font Info:    ... okay on input line 161.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 161.
+LaTeX Font Info:    ... okay on input line 161.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 161.
+LaTeX Font Info:    ... okay on input line 161.
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -838,53 +856,53 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
 (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-Package hyperref Info: Link coloring OFF on input line 154.
+Package hyperref Info: Link coloring OFF on input line 161.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/lmr/m/n --> OT1/cmss/m/n on input line 154.
+(Font)                  OT1/lmr/m/n --> OT1/cmss/m/n on input line 161.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/lmr/bx/n --> OT1/cmss/b/n on input line 154.
+(Font)                  OT1/lmr/bx/n --> OT1/cmss/b/n on input line 161.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/lmss/m/n on input line 154.
+(Font)                  OT1/cmss/m/n --> OT1/lmss/m/n on input line 161.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmss/b/n --> OT1/lmss/b/n on input line 154.
+(Font)                  OT1/cmss/b/n --> OT1/lmss/b/n on input line 161.
 \symnumbers=\mathgroup6
 \sympureletters=\mathgroup7
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `normal'
-(Font)                  OT1/lmss/m/n --> T1/lmr/m/n on input line 154.
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 154.
+(Font)                  OT1/lmss/m/n --> T1/lmr/m/n on input line 161.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 161.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/lmr/bx/n --> T1/lmss/b/n on input line 154.
+(Font)                  OT1/lmr/bx/n --> T1/lmss/b/n on input line 161.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/lmr/bx/n --> T1/lmss/b/n on input line 154.
-LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 154.
+(Font)                  OT1/lmr/bx/n --> T1/lmss/b/n on input line 161.
+LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 161.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/lmss/m/n --> T1/lmss/m/n on input line 154.
+(Font)                  OT1/lmss/m/n --> T1/lmss/m/n on input line 161.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/lmss/bx/n --> T1/lmss/m/n on input line 154.
-LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 154.
+(Font)                  OT1/lmss/bx/n --> T1/lmss/m/n on input line 161.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 161.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/lmr/m/it --> T1/lmss/m/it on input line 154.
+(Font)                  OT1/lmr/m/it --> T1/lmss/m/it on input line 161.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/lmr/bx/it --> T1/lmss/m/it on input line 154.
-LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 154.
+(Font)                  OT1/lmr/bx/it --> T1/lmss/m/it on input line 161.
+LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 161.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/lmtt/m/n --> T1/lmtt/m/n on input line 154.
+(Font)                  OT1/lmtt/m/n --> T1/lmtt/m/n on input line 161.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/lmtt/m/n --> T1/lmtt/m/n on input line 154.
+(Font)                  OT1/lmtt/m/n --> T1/lmtt/m/n on input line 161.
 LaTeX Font Info:    Overwriting symbol font `numbers' in version `bold'
-(Font)                  T1/lmss/m/n --> T1/lmss/b/n on input line 154.
+(Font)                  T1/lmss/m/n --> T1/lmss/b/n on input line 161.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
-(Font)                  T1/lmss/m/it --> T1/lmss/b/it on input line 154.
+(Font)                  T1/lmss/m/it --> T1/lmss/b/it on input line 161.
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `bold'
-(Font)                  OT1/lmss/b/n --> T1/lmr/b/n on input line 154.
+(Font)                  OT1/lmss/b/n --> T1/lmr/b/n on input line 161.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  T1/lmss/b/n --> T1/lmss/b/n on input line 154.
+(Font)                  T1/lmss/b/n --> T1/lmss/b/n on input line 161.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  T1/lmss/m/n --> T1/lmss/b/n on input line 154.
+(Font)                  T1/lmss/m/n --> T1/lmss/b/n on input line 161.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  T1/lmss/m/it --> T1/lmss/b/it on input line 154.
+(Font)                  T1/lmss/m/it --> T1/lmss/b/it on input line 161.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  T1/lmtt/m/n --> T1/lmtt/b/n on input line 154.
+(Font)                  T1/lmtt/m/n --> T1/lmtt/b/n on input line 161.
 (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/translator/translator-basic-dictionary-English.dict
 Dictionary: translator-basic-dictionary, Language: English 
 ) (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/translator/translator-bibliography-dictionary-English.dict
@@ -897,13 +915,19 @@ Dictionary: translator-months-dictionary, Language: English
 Dictionary: translator-numbers-dictionary, Language: English 
 ) (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/translator/translator-theorem-dictionary-English.dict
 Dictionary: translator-theorem-dictionary, Language: English 
-) (./Aula6_variados_relatorios.nav)
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 154--154
+)
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
+Package caption Info: threeparttable package is loaded.
+Package caption Info: wrapfig package is loaded.
+Package caption Info: End \AtBeginDocument code.
+(./Aula6_variados_relatorios.nav)
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 161--161
  [][][][]  
  []
 
 
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 155--155
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 162--162
  [][][][]  
  []
 
@@ -917,14 +941,14 @@ Overfull \hbox (49.10477pt too wide) has occurred while \output is active
 [1
 
 {/Users/ottotavares/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}]
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 157--157
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 164--164
  [][][][]  
  []
 
 \openout4 = `Aula6_variados_relatorios.vrb'.
 
 
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 177--177
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 184--184
  [][][][]  
  []
 
@@ -947,14 +971,14 @@ Overfull \hbox (49.10477pt too wide) has occurred while \output is active
 [2
 
 ]
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 179--179
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 186--186
  [][][][]  
  []
 
 \openout4 = `Aula6_variados_relatorios.vrb'.
 
 
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 194--194
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 201--201
  [][][][]  
  []
 
@@ -968,7 +992,7 @@ Overfull \hbox (49.10477pt too wide) has occurred while \output is active
 [3
 
 ]
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 196--196
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 203--203
  [][][][]  
  []
 
@@ -982,7 +1006,7 @@ Overfull \hbox (49.10477pt too wide) has occurred while \output is active
 [4
 
 ]
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 224--224
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 231--231
  [][][][]  
  []
 
@@ -996,42 +1020,42 @@ Overfull \hbox (49.10477pt too wide) has occurred while \output is active
 [5
 
 ]
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 253--253
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 260--260
  [][][][]  
  []
 
-LaTeX Font Info:    Trying to load font information for OT1+lmss on input line 253.
+LaTeX Font Info:    Trying to load font information for OT1+lmss on input line 260.
 (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/lm/ot1lmss.fd
 File: ot1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 253.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 260.
 (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 253.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 260.
 (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 253.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 260.
 (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 253.
+(Font)              <7> on input line 260.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 253.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 253.
+(Font)              <5> on input line 260.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 260.
 (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 253.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 260.
 (/Users/ottotavares/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <7> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 253.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 260.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <5> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 253.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 260.
 
 
 
@@ -1042,14 +1066,14 @@ Overfull \hbox (49.10477pt too wide) has occurred while \output is active
 [6
 
 ]
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 255--255
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 262--262
  [][][][]  
  []
 
 \openout4 = `Aula6_variados_relatorios.vrb'.
 
 
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 292--292
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 299--299
  [][][][]  
  []
 
@@ -1063,14 +1087,14 @@ Overfull \hbox (49.10477pt too wide) has occurred while \output is active
 [7
 
 ]
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 294--294
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 301--301
  [][][][]  
  []
 
 \openout4 = `Aula6_variados_relatorios.vrb'.
 
 
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 327--327
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 339--339
  [][][][]  
  []
 
@@ -1089,14 +1113,14 @@ Overfull \hbox (49.10477pt too wide) has occurred while \output is active
 [8
 
 ]
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 329--329
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 341--341
  [][][][]  
  []
 
 \openout4 = `Aula6_variados_relatorios.vrb'.
 
 
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 375--375
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 388--388
  [][][][]  
  []
 
@@ -1106,7 +1130,7 @@ Overfull \hbox (77.22223pt too wide) in paragraph at lines 14--14
  []
 
 )
-Overfull \vbox (33.68738pt too high) detected at line 375
+Overfull \vbox (205.72652pt too high) detected at line 388
  []
 
 
@@ -1119,14 +1143,14 @@ Overfull \hbox (49.10477pt too wide) has occurred while \output is active
 [9
 
 ]
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 377--377
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 390--390
  [][][][]  
  []
 
 \openout4 = `Aula6_variados_relatorios.vrb'.
 
 
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 387--387
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 400--400
  [][][][]  
  []
 
@@ -1140,14 +1164,14 @@ Overfull \hbox (49.10477pt too wide) has occurred while \output is active
 [10
 
 ]
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 399--399
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 412--412
  [][][][]  
  []
 
-<Figs/analisando salario visualmente -1.pdf, id=137, 423.5825pt x 255.95625pt>
+<Figs/analisando salario visualmente -1.pdf, id=168, 423.5825pt x 255.95625pt>
 File: Figs/analisando salario visualmente -1.pdf Graphic file (type pdf)
 <use Figs/analisando salario visualmente -1.pdf>
-Package pdftex.def Info: Figs/analisando salario visualmente -1.pdf  used on input line 399.
+Package pdftex.def Info: Figs/analisando salario visualmente -1.pdf  used on input line 412.
 (pdftex.def)             Requested size: 239.70367pt x 144.84206pt.
 
 
@@ -1159,7 +1183,7 @@ Overfull \hbox (49.10477pt too wide) has occurred while \output is active
 [11
 
  <./Figs/analisando salario visualmente -1.pdf>]
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 415--415
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 428--428
  [][][][]  
  []
 
@@ -1173,19 +1197,15 @@ Overfull \hbox (49.10477pt too wide) has occurred while \output is active
 [12
 
 ]
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 451--451
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 461--461
  [][][][]  
  []
 
+LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <10.95> not available
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 461.
 
-Package hyperref Warning: Ignoring empty anchor on input line 451.
-
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 451.
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <6> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 451.
-
-Package hyperref Warning: Ignoring empty anchor on input line 451.
+Overfull \vbox (46.05847pt too high) detected at line 461
+ []
 
 
 
@@ -1196,16 +1216,20 @@ Overfull \hbox (49.10477pt too wide) has occurred while \output is active
 
 [13
 
-{/Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}]
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 491--491
+]
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 501--501
  [][][][]  
  []
 
 
-Package hyperref Warning: Ignoring empty anchor on input line 491.
+Package hyperref Warning: Ignoring empty anchor on input line 501.
 
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <6> on input line 501.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <6> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 501.
 
-Package hyperref Warning: Ignoring empty anchor on input line 491.
+Package hyperref Warning: Ignoring empty anchor on input line 501.
 
 
 
@@ -1216,16 +1240,16 @@ Overfull \hbox (49.10477pt too wide) has occurred while \output is active
 
 [14
 
-]
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 534--534
+{/Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}]
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 544--544
  [][][][]  
  []
 
 
-Package hyperref Warning: Ignoring empty anchor on input line 534.
+Package hyperref Warning: Ignoring empty anchor on input line 544.
 
 
-Package hyperref Warning: Ignoring empty anchor on input line 534.
+Package hyperref Warning: Ignoring empty anchor on input line 544.
 
 
 
@@ -1237,23 +1261,23 @@ Overfull \hbox (49.10477pt too wide) has occurred while \output is active
 [15
 
 ]
-Overfull \hbox (49.10477pt too wide) in paragraph at lines 579--579
+Overfull \hbox (49.10477pt too wide) in paragraph at lines 589--589
  [][][][]  
  []
 
 
-Package hyperref Warning: Ignoring empty anchor on input line 579.
+Package hyperref Warning: Ignoring empty anchor on input line 589.
 
 
-Overfull \hbox (13.88312pt too wide) in paragraph at lines 579--579
+Overfull \hbox (13.88312pt too wide) in paragraph at lines 589--589
  [] 
  []
 
 
-Package hyperref Warning: Ignoring empty anchor on input line 579.
+Package hyperref Warning: Ignoring empty anchor on input line 589.
 
 
-Overfull \vbox (14.56165pt too high) detected at line 579
+Overfull \vbox (13.12828pt too high) detected at line 589
  []
 
 
@@ -1285,18 +1309,18 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 24643 strings out of 475171
- 477076 string characters out of 5764873
- 846448 words of memory out of 5000000
- 47028 multiletter control sequences out of 15000+600000
- 608733 words of font info for 71 fonts, out of 8000000 for 9000
+ 26068 strings out of 475171
+ 506044 string characters out of 5764873
+ 871467 words of memory out of 5000000
+ 48436 multiletter control sequences out of 15000+600000
+ 617087 words of font info for 74 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 101i,15n,107p,421b,704s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi6.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmss10.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmss12.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmss8.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmssbx10.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsso10.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsso8.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy6.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on Aula6_variados_relatorios.pdf (16 pages, 291697 bytes).
+ 101i,15n,107p,421b,856s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi6.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmss10.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmss12.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmss8.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmssbo10.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmssbx10.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsso10.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsso8.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy6.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></Users/ottotavares/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
+Output written on Aula6_variados_relatorios.pdf (16 pages, 331565 bytes).
 PDF statistics:
- 261 PDF objects out of 1000 (max. 8388607)
- 174 compressed objects within 2 object streams
- 48 named destinations out of 1000 (max. 500000)
- 134 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 298 PDF objects out of 1000 (max. 8388607)
+ 195 compressed objects within 2 object streams
+ 51 named destinations out of 1000 (max. 500000)
+ 218 words of extra memory for PDF output out of 10000 (max. 10000000)
 

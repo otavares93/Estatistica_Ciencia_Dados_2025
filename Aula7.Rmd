@@ -166,7 +166,7 @@ salarios %>% dplyr::select(salario) %>% ggplot(aes(x=salario))+geom_histogram(ae
 ### Lista com diversos gráficos de histograma para testar a amplitude do bin
 
 ```{r analisando salario visualmente para varios bins, echo = TRUE}
-hists.bins <- lapply(1:10, function(bwdt) salarios %>% dplyr::select(salario) %>% ggplot(aes(x = salario)) + geom_histogram(aes(y = after_stat(density)), binwidth = bwdt))
+hists.bins <- lapply(1:10, function(bwdt) salarios %>% dplyr::select(salario) %>% ggplot(aes(x = salario)) + geom_histogram(aes(y = after_stat(density)), bins = bwdt))
 ```
 
 ### Lista com diversos gráficos de histograma acompanhados de estimativas para densidade variando a função kernel

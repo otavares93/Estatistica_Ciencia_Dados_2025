@@ -4,7 +4,7 @@ author: "Otto Tavares"
 date: "`r format(Sys.time(), '%d %b, %Y')`"
 header-includes:
 -   \usepackage{booktabs}
-output: ioslides_presentation
+output: beamer_presentation
 theme: "Madrid"
 colortheme: "beaver"
 #fonttheme: "structurebold"
@@ -112,9 +112,9 @@ salarios %>% dplyr::select(n_filhos) %>%
 - A centralidade dos dados, a dipersão, a assimetria, bem como as estatísticas de ordem são calculadas, a fim de ter uma leitura acerca da distribuição dessa variável.
 
 ```{r desc variavel salario , echo = FALSE, warning = FALSE, results='asis', include = TRUE, error=FALSE}
-salarios %>% dplyr::select(salario) %>% summarytools::descr() %>% 
-  kable(., , format = "latex", booktabs = T) %>%
-  kableExtra::kable_styling(font_size = 5)
+salarios %>% dplyr::select(salario) %>% summarytools::descr(style = "rmarkdown") #%>% 
+  #kable(., , format = "latex", booktabs = T) %>%
+  #kableExtra::kable_styling(font_size = 5)
 ```
 
 ## Função de Sturge para cálculo do número de bins

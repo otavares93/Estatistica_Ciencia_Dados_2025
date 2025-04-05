@@ -1,0 +1,31 @@
+---
+title: "Referências"
+output: html_document
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+1. Probabilidade aplicado à estatística - Paul L. Meyer
+  
+  * Introduz os conceitos básicos de probabilidade e fundamenta todo pensamento estatístico a partir desta fundamentação. O que é um espaço amostral, o que é um evento, a variável aleatória é função de um evento, distribuição populacional e distribuição amostral. Ter esses conceitos bem fundamentados, facilita na hora de tomar decisão ao analisar uma base de dados.
+  
+2. Estatística Básica - Bussab & Morettin
+
+  * Referência muito utilizada no curso, fornecendo uma das bases de dados, bem como sendo importante para os exemplos de teste de hipótese e para a parte conceitual de relação de variáveis.
+
+
+3. Inferência Estatística - Casella & Berger
+
+  * Referência mais avançada para estudar estimadores, viés dos estimadores, bem como sua distribuição assintótica. Para quem tiver interesse em ir mais a fundo.
+
+
+4. Econometria - Stock & Watson 
+  
+  * Referência de regressão linear e regressão linear para dados em painel. Eles abordam toda fundamentação teórica de regressão, como estimativa dos parâmetros, hipótese de ortogonalidade dos erros, além de possuir uma série de exemplos. É dele que vem a sugestão de trabalhar a base de dados do Pib Real para os países, sugerida para o trabalho final.
+
+
+5. The Elements of Statistical Learning, Data Mining, Inference and Prediction - Hastiem Tibshirani & Friedman
+  
+  * Referência mais avançada para estudar modelagem estatística, introduzir o que é aprendizado, os conceitos de modelos superivisionados e não supervisionados. Estimativa estatística a partir de iterações e sub-divisões dos dados, como validação cruzada e bootstrap.
+
+
+

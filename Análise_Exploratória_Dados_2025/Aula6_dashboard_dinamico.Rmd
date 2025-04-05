@@ -56,7 +56,7 @@ selectInput(
   #  choices = 1:20, selected = 5
   #)
   
-  selectInput(
+selectInput(
     'modelo', label = 'Escolha um modelo para realizar input:',
     choices = c("mean","midastouch", "pmm", "rf"), selected = "pmm"
   )
@@ -106,7 +106,7 @@ salarios %>% dplyr::select(Grau_de_instrucao) %>% summarytools::freq() %>% kbl(c
 
 ```{r}
 
-renderPlot({
+renderPlot({eventReactive(c(input$particoes, input$modelo),{
   
 imp <- mice(salarios %>% dplyr::mutate(estado_civil = as.factor(estado_civil), Grau_de_instrucao =   as.factor(Grau_de_instrucao), regiao = as.factor(regiao)), print = FALSE, m = as.numeric(input$particoes), method = as.character(input$modelo) , seed   = 512) 
 
@@ -118,18 +118,20 @@ ggplot(imp_nfilhos, aes(x = n_filhos, y = after_stat(density), colour = imp)) + 
 
 })
 
+})
+
 ```
 
 ### StripPlot de todos dados preenchidos
 
 ```{r}
 
-renderPlot({
+renderPlot({eventReactive(c(particoes, modelo),{
   
 imp <- mice(salarios %>% dplyr::mutate(estado_civil = as.factor(estado_civil), Grau_de_instrucao =   as.factor(Grau_de_instrucao), regiao = as.factor(regiao)), print = FALSE, m = as.numeric(input$particoes), method = as.character(input$modelo) , seed   = 512) 
 
 stripplot(imp, pch = c(21, 20), cex = c(1, 1.5))
-
+  })
 })
 
 ```
